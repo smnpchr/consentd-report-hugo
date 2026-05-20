@@ -1,0 +1,19 @@
+baseURL = "/"
+title = "consentd Reports"
+theme = "hugo-book"
+
+enableGitInfo = false
+defaultContentLanguage = "de"
+
+[params]
+  BookTheme = "auto"
+  BookToC = true
+  BookSection = "reports"
+  BookMenuBundle = "/reports"
+
+[markup]
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  [markup.goldmark.renderer]
+    unsafe = false

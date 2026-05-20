@@ -1,0 +1,88 @@
+/* consentd report severity colors */
+
+:root {
+  --severity-info: #2563eb;
+  --severity-warning: #ca8a04;
+  --severity-error: #dc2626;
+  --severity-critical: #991b1b;
+}
+
+/* Sidebar: severity dot before patient entries */
+/* Applied via Hugo Book's menu template customization */
+.severity-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.severity-dot-info     { background-color: var(--severity-info); }
+.severity-dot-warning  { background-color: var(--severity-warning); }
+.severity-dot-error    { background-color: var(--severity-error); }
+.severity-dot-critical { background-color: var(--severity-critical); }
+
+/* Detail page: severity banner */
+.severity-banner {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  border-left: 4px solid;
+}
+
+.severity-banner-info {
+  background: #eff4ff;
+  border-color: var(--severity-info);
+  color: var(--severity-info);
+}
+
+.severity-banner-warning {
+  background: #fefce8;
+  border-color: var(--severity-warning);
+  color: var(--severity-warning);
+}
+
+.severity-banner-error {
+  background: #fef2f2;
+  border-color: var(--severity-error);
+  color: var(--severity-error);
+}
+
+.severity-banner-critical {
+  background: #fef2f2;
+  border-color: var(--severity-critical);
+  color: var(--severity-critical);
+}
+
+/* Summary page: severity counter badges */
+.severity-counters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.severity-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.severity-badge-info     { background: #eff4ff; color: var(--severity-info); }
+.severity-badge-warning  { background: #fefce8; color: var(--severity-warning); }
+.severity-badge-error    { background: #fef2f2; color: var(--severity-error); }
+.severity-badge-critical { background: #fef2f2; color: var(--severity-critical); }
+
+/* Consent comparison table styling */
+table {
+  width: 100%;
+}
+
+td:last-child {
+  text-align: center;
+}

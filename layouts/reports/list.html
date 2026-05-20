@@ -1,0 +1,46 @@
+{{ define "main" }}
+  <article class="markdown book-article">
+    {{- .Content -}}
+
+    {{ if .Params.patient_count }}
+    {{/* Daily summary page — show severity badges and patient list */}}
+    <div class="severity-counters">
+      {{ with .Params.severity_info }}<span class="severity-badge severity-badge-info">Info: {{ . }}</span>{{ end }}
+      {{ with .Params.severity_warning }}<span class="severity-badge severity-badge-warning">Warnung: {{ . }}</span>{{ end }}
+      {{ with .Params.severity_error }}<span class="severity-badge severity-badge-error">Fehler: {{ . }}</span>{{ end }}
+      {{ with .Params.severity_critical }}<span class="severity-badge severity-badge-critical">Kritisch: {{ . }}</span>{{ end }}
+    </div>
+
+    <h2>Patienten</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Patient</th>
+          <th>Severity</th>
+          <th>Regel</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ range .Pages }}
+        <tr>
+          <td><a href="{{ .RelPermalink }}">{{ .Title }}</a></td>
+          <td><span class="severity-badge severity-badge-{{ .Params.severity }}">{{ .Params.severity }}</span></td>
+          <td>{{ .Params.rule }}</td>
+          <td>{{ delimit .Params.actions ", " }}</td>
+        </tr>
+        {{ end }}
+      </tbody>
+    </table>
+    {{ else }}
+    {{/* Top-level reports list — show date entries */}}
+    {{ range .Sections.ByWeight }}
+      <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+      <p>{{ .Params.patient_count }} Patienten
+        {{ with .Params.severity_error }} &middot; {{ . }} Fehler{{ end }}
+        {{ with .Params.severity_critical }} &middot; {{ . }} Kritisch{{ end }}
+      </p>
+    {{ end }}
+    {{ end }}
+  </article>
+{{ end }}
