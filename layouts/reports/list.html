@@ -2,30 +2,30 @@
   <article class="markdown book-article">
     {{- .Content -}}
 
-    {{ if .Params.patient_count }}
+    {{ if .Params.patientCount }}
     {{/* Daily summary page — show severity badges and patient list */}}
     <div class="severity-counters">
-      {{ with .Params.severity_info }}<span class="severity-badge severity-badge-info">Info: {{ . }}</span>{{ end }}
-      {{ with .Params.severity_warning }}<span class="severity-badge severity-badge-warning">Warnung: {{ . }}</span>{{ end }}
-      {{ with .Params.severity_error }}<span class="severity-badge severity-badge-error">Fehler: {{ . }}</span>{{ end }}
-      {{ with .Params.severity_critical }}<span class="severity-badge severity-badge-critical">Kritisch: {{ . }}</span>{{ end }}
+      {{ with .Params.severityInfo }}<span class="severity-badge severity-badge-info">{{ i18n "severity_info" }}: {{ . }}</span>{{ end }}
+      {{ with .Params.severityWarning }}<span class="severity-badge severity-badge-warning">{{ i18n "severity_warning" }}: {{ . }}</span>{{ end }}
+      {{ with .Params.severityError }}<span class="severity-badge severity-badge-error">{{ i18n "severity_error" }}: {{ . }}</span>{{ end }}
+      {{ with .Params.severityCritical }}<span class="severity-badge severity-badge-critical">{{ i18n "severity_critical" }}: {{ . }}</span>{{ end }}
     </div>
 
-    <h2>Patienten</h2>
+    <h2>{{ i18n "summary_patients" }}</h2>
     <table>
       <thead>
         <tr>
-          <th>Patient</th>
-          <th>Severity</th>
-          <th>Regel</th>
-          <th>Aktionen</th>
+          <th>{{ i18n "summary_patient" }}</th>
+          <th>{{ i18n "summary_severity" }}</th>
+          <th>{{ i18n "heading_rule" }}</th>
+          <th>{{ i18n "heading_actions" }}</th>
         </tr>
       </thead>
       <tbody>
         {{ range .Pages }}
         <tr>
           <td><a href="{{ .RelPermalink }}">{{ .Title }}</a></td>
-          <td><span class="severity-badge severity-badge-{{ .Params.severity }}">{{ .Params.severity }}</span></td>
+          <td><span class="severity-badge severity-badge-{{ .Params.severity }}">{{ i18n (printf "severity_%s" .Params.severity) }}</span></td>
           <td>{{ .Params.rule }}</td>
           <td>{{ delimit .Params.actions ", " }}</td>
         </tr>
@@ -36,9 +36,9 @@
     {{/* Top-level reports list — show date entries */}}
     {{ range .Sections.ByWeight }}
       <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-      <p>{{ .Params.patient_count }} Patienten
-        {{ with .Params.severity_error }} &middot; {{ . }} Fehler{{ end }}
-        {{ with .Params.severity_critical }} &middot; {{ . }} Kritisch{{ end }}
+      <p>{{ .Params.patientCount }} {{ i18n "summary_patients" }}
+        {{ with .Params.severityError }} &middot; {{ . }} {{ i18n "severity_error" }}{{ end }}
+        {{ with .Params.severityCritical }} &middot; {{ . }} {{ i18n "severity_critical" }}{{ end }}
       </p>
     {{ end }}
     {{ end }}

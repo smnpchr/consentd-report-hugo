@@ -4,32 +4,37 @@ date: 2026-05-19T18:30:02+02:00
 severity: warning
 rule: DECLINED_THS_EXISTING_LIMS
 actions: [INVALIDATE, REPORT]
+ruleSpec:
+  description: "Abgelehnter THS-Consent, LIMS hat bestehenden Import"
+  ths:
+    aggregated: [DECLINED, REVOKED]
+  lims:
+    aggregated: [AFFIRMED]
+  recency: THS
+  equality: ANY
+evaluation:
+  ths:
+    aggregated: DECLINED
+    validity: VALID
+  lims:
+    aggregated: AFFIRMED
+    validity: VALID
+  recency: THS
+  equality: ANY
+consent:
+  ths:
+    acquireUseStock: REFUSED
+    additionalAcquisition: REFUSED
+    retrospectiveUsage: REFUSED
+    nonEuTransfer: REFUSED
+    validFrom: 2026-05-10
+    validUntil: 2027-05-10
+    expired: false
+  lims:
+    acquireUseStock: GRANTED
+    additionalAcquisition: GRANTED
+    retrospectiveUsage: GRANTED
+    nonEuTransfer: GRANTED
 ---
 
-## Regel
-
-**DECLINED_THS_EXISTING_LIMS** — Abgelehnter THS-Consent, LIMS hat bestehenden Import
-
-Patient hat Consent widerrufen. Bestehender LIMS-Eintrag wird invalidiert.
-
-## Evaluation
-
-| Dimension | THS | LIMS |
-|-----------|-----|-----|
-| Aggregiert | Abgelehnt | Importiert |
-| Gültigkeit | Gültig | Gültig |
-| Aktualität | Neuer | Älter |
-| Gleichheit | — | — |
-
-## Consent-Vergleich
-
-| Modul | THS | LIMS | Diff |
-|-------|-----|-----|------|
-| Gewinnung/Lagerung/Nutzung | ❌ declined | ✅ accepted | ≠ |
-| Zusatzentnahme | ❌ declined | ✅ accepted | ≠ |
-| Retrospektive Nutzung | ❌ declined | ✅ accepted | ≠ |
-| Nicht-EU-Weitergabe | ❌ declined | ✅ accepted | ≠ |
-
-## Aktionen
-
-Invalidierung + Bericht
+# INT-DECLINED

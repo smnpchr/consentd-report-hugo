@@ -1,5 +1,116 @@
 {{ define "main" }}
+  {{- $p := .Params -}}
   <article class="markdown book-article">
     {{- .Content -}}
+
+    {{/* Rule section */}}
+    {{ with $p.rule }}
+    <section class="report-section report-rule">
+      <h2>{{ i18n "heading_rule" }}</h2>
+      <p>
+        <strong>{{ . }}</strong>
+        {{- with $p.ruleSpec.description }} &mdash; {{ . }}{{ end -}}
+      </p>
+    </section>
+    {{ end }}
+
+    {{/* Evaluation table */}}
+    {{ with $p.evaluation }}
+    <section class="report-section report-evaluation">
+      <h2>{{ i18n "heading_evaluation" }}</h2>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>{{ i18n "label_dimension" }}</th>
+            <th>{{ i18n "label_ths" }}</th>
+            <th>{{ i18n "label_lims" }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ i18n "label_aggregated" }}</td>
+            <td>{{ i18n (printf "aggregated_%s" (.ths.aggregated | default "EMPTY")) }}</td>
+            <td>{{ i18n (printf "aggregated_%s" (.lims.aggregated | default "EMPTY")) }}</td>
+          </tr>
+          <tr>
+            <td>{{ i18n "label_validity" }}</td>
+            <td>{{ i18n (printf "validity_%s" (.ths.validity | default "NONE")) }}</td>
+            <td>{{ i18n (printf "validity_%s" (.lims.validity | default "NONE")) }}</td>
+          </tr>
+          <tr>
+            <td>{{ i18n "label_recency" }}</td>
+            <td colspan="2">{{ i18n (printf "recency_%s" (.recency | default "ANY")) }}</td>
+          </tr>
+          <tr>
+            <td>{{ i18n "label_equality" }}</td>
+            <td colspan="2">{{ i18n (printf "equality_%s" (.equality | default "ANY")) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    {{ end }}
+
+    {{/* Consent comparison */}}
+    {{ with $p.consent }}
+    <section class="report-section report-consent">
+      <h2>{{ i18n "heading_consent" }}</h2>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>{{ i18n "label_module" }}</th>
+            <th>{{ i18n "label_ths" }}</th>
+            <th>{{ i18n "label_lims" }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ $modules := slice "acquireUseStock" "additionalAcquisition" "retrospectiveUsage" "nonEuTransfer" }}
+          {{ $ths := .ths }}
+          {{ $lims := .lims }}
+          {{ range $m := $modules }}
+          {{ $thsVal := index $ths $m }}
+          {{ $limsVal := index $lims $m }}
+          {{ $diff := and (ne $thsVal nil) (ne $limsVal nil) (ne $thsVal $limsVal) }}
+          <tr{{ if $diff }} class="row-diff"{{ end }}>
+            <td>{{ i18n (printf "module_%s" $m) }}</td>
+            <td>
+              {{- if $ths -}}
+                <span class="module-val module-val-{{ $thsVal | default "EMPTY" }}">{{ i18n (printf "module_%s" ($thsVal | default "EMPTY")) }}</span>
+              {{- else }}&mdash;{{ end -}}
+            </td>
+            <td>
+              {{- if $lims -}}
+                <span class="module-val module-val-{{ $limsVal | default "EMPTY" }}">{{ i18n (printf "module_%s" ($limsVal | default "EMPTY")) }}</span>
+              {{- else }}&mdash;{{ end -}}
+            </td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+
+      {{/* THS validity dates */}}
+      {{ with .ths }}
+      {{ if or .validFrom .validUntil }}
+      <p class="consent-validity">
+        <strong>{{ i18n "label_ths" }}:</strong>
+        {{ i18n "label_valid_from" }} {{ .validFrom | default "—" }} &middot;
+        {{ i18n "label_valid_until" }} {{ .validUntil | default "—" }}
+        {{ if .expired }} &middot; <em>{{ i18n "label_expired" }}</em>{{ end }}
+      </p>
+      {{ end }}
+      {{ end }}
+    </section>
+    {{ end }}
+
+    {{/* Actions */}}
+    {{ with $p.actions }}
+    <section class="report-section report-actions">
+      <h2>{{ i18n "heading_actions" }}</h2>
+      <ul class="action-list">
+        {{ range . }}
+        <li class="action-item{{ if and $p.failureAction (eq $p.failureAction .) }} action-failed{{ end }}">{{ . }}</li>
+        {{ end }}
+      </ul>
+    </section>
+    {{ end }}
   </article>
 {{ end }}

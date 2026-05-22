@@ -78,11 +78,74 @@
 .severity-badge-error    { background: #fef2f2; color: var(--severity-error); }
 .severity-badge-critical { background: #fef2f2; color: var(--severity-critical); }
 
-/* Consent comparison table styling */
-table {
-  width: 100%;
+/* Report sections (detail page, rendered from front matter) */
+.report-section {
+  margin-top: 1.5rem;
 }
 
-td:last-child {
-  text-align: center;
+.report-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-table th,
+.report-table td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.2);
+  text-align: left;
+}
+
+.report-table tr.row-diff td {
+  background-color: rgba(202, 138, 4, 0.08);
+}
+
+.module-val {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.module-val-GRANTED     { background: #dcfce7; color: #166534; }
+.module-val-REFUSED     { background: #fee2e2; color: #991b1b; }
+.module-val-UNKNOWN     { background: #f3f4f6; color: #4b5563; }
+.module-val-NOT_PRESENT { background: #f3f4f6; color: #6b7280; font-style: italic; }
+.module-val-EMPTY       { background: transparent; color: #9ca3af; }
+
+.consent-validity {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.action-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.action-item {
+  padding: 0.25rem 0.7rem;
+  border-radius: 4px;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.action-item.action-failed {
+  background: #fee2e2;
+  color: #991b1b;
+  text-decoration: line-through;
+}
+
+/* Summary patient table */
+.book-article > table {
+  width: 100%;
 }

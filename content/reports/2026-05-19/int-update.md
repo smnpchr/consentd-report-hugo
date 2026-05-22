@@ -4,34 +4,37 @@ date: 2026-05-19T18:30:04+02:00
 severity: warning
 rule: UPDATED_AFFIRMED_THS
 actions: [IMPORT, REPORT]
+ruleSpec:
+  description: "Aktualisierter bestätigter Consent, LIMS veraltet"
+  ths:
+    aggregated: [AFFIRMED]
+  lims:
+    aggregated: [AFFIRMED]
+  recency: THS
+  equality: NOT_EQUAL
+evaluation:
+  ths:
+    aggregated: AFFIRMED
+    validity: VALID
+  lims:
+    aggregated: AFFIRMED
+    validity: VALID
+  recency: THS
+  equality: NOT_EQUAL
+consent:
+  ths:
+    acquireUseStock: GRANTED
+    additionalAcquisition: GRANTED
+    retrospectiveUsage: GRANTED
+    nonEuTransfer: REFUSED
+    validFrom: 2026-03-01
+    validUntil: 2027-03-01
+    expired: false
+  lims:
+    acquireUseStock: GRANTED
+    additionalAcquisition: REFUSED
+    retrospectiveUsage: GRANTED
+    nonEuTransfer: REFUSED
 ---
 
-## Regel
-
-**UPDATED_AFFIRMED_THS** — Aktualisierter bestätigter Consent, LIMS veraltet
-
-Neuerer THS-Consent ersetzt bestehenden LIMS-Import.
-
-## Evaluation
-
-| Dimension | THS | LIMS |
-|-----------|-----|-----|
-| Aggregiert | Bestätigt | Importiert |
-| Gültigkeit | Gültig | Gültig |
-| Aktualität | Neuer | Älter |
-| Gleichheit | Ungleich | — |
-
-## Consent-Vergleich
-
-| Modul | THS | LIMS | Diff |
-|-------|-----|-----|------|
-| Gewinnung/Lagerung/Nutzung | ✅ accepted | ✅ accepted | = |
-| Zusatzentnahme | ✅ accepted | ❌ declined | ≠ |
-| Retrospektive Nutzung | ✅ accepted | ✅ accepted | = |
-| Nicht-EU-Weitergabe | ❌ declined | ❌ declined | = |
-
-**Gültigkeit THS**: 2026-03-01 → 2027-03-01 (gültig)
-
-## Aktionen
-
-Import (Update) + Bericht
+# INT-UPDATE

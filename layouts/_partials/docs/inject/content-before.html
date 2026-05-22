@@ -1,16 +1,16 @@
 {{- with .Params.severity -}}
 <div class="severity-banner severity-banner-{{ . }}">
-  {{- if eq . "info" }}&#x2139;&#xFE0F; Info
-  {{- else if eq . "warning" }}&#x26A0;&#xFE0F; Warnung
-  {{- else if eq . "error" }}&#x274C; Fehler
-  {{- else if eq . "critical" }}&#x1F6A8; Kritisch
+  {{- if eq . "info" }}&#x2139;&#xFE0F; {{ i18n "severity_info" }}
+  {{- else if eq . "warning" }}&#x26A0;&#xFE0F; {{ i18n "severity_warning" }}
+  {{- else if eq . "error" }}&#x274C; {{ i18n "severity_error" }}
+  {{- else if eq . "critical" }}&#x1F6A8; {{ i18n "severity_critical" }}
   {{- end -}}
   {{- with $.Params.rule }} &mdash; {{ . }}{{ end -}}
 </div>
 {{- end -}}
 
-{{- with .Params.failure_action -}}
+{{- with .Params.failureAction -}}
 <div class="severity-banner severity-banner-critical" style="margin-top: -0.5rem;">
-  <strong>{{ . }} fehlgeschlagen</strong>: {{ $.Params.failure_reason }}
+  <strong>{{ . }} {{ i18n "failure_suffix" }}</strong>: {{ $.Params.failureReason }}
 </div>
 {{- end -}}

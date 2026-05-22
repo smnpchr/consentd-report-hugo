@@ -1,0 +1,73 @@
+# Severity labels
+severity_info: "Info"
+severity_warning: "Warnung"
+severity_error: "Fehler"
+severity_critical: "Kritisch"
+
+# Section headings (detail page)
+heading_rule: "Regel"
+heading_evaluation: "Evaluation"
+heading_consent: "Consent-Vergleich"
+heading_actions: "Aktionen"
+heading_failure: "Fehler"
+
+# Detail page table labels
+label_dimension: "Dimension"
+label_ths: "THS"
+label_lims: "LIMS"
+label_module: "Modul"
+label_aggregated: "Aggregiert"
+label_validity: "Gültigkeit"
+label_recency: "Aktualität"
+label_equality: "Gleichheit"
+label_valid_from: "Gültig von"
+label_valid_until: "Gültig bis"
+label_expired: "Abgelaufen"
+
+# Module names
+module_acquireUseStock: "Gewinnung/Lagerung/Nutzung"
+module_additionalAcquisition: "Zusatzentnahme"
+module_retrospectiveUsage: "Retrospektive Nutzung"
+module_nonEuTransfer: "Nicht-EU-Weitergabe"
+
+# Aggregated values
+aggregated_AFFIRMED: "Bestätigt"
+aggregated_DECLINED: "Abgelehnt"
+aggregated_REVOKED: "Widerrufen"
+aggregated_INCONSISTENT: "Inkonsistent"
+aggregated_EMPTY: "Leer"
+aggregated_ANY: "Beliebig"
+
+# Validity values
+validity_VALID: "Gültig"
+validity_EXPIRED: "Abgelaufen"
+validity_NONE: "—"
+
+# Module status values
+module_GRANTED: "Erteilt"
+module_REFUSED: "Verweigert"
+module_UNKNOWN: "Unbekannt"
+module_NOT_PRESENT: "Nicht enthalten"
+module_EMPTY: "—"
+
+# Recency / equality
+recency_ANY: "—"
+recency_THS: "THS aktueller"
+recency_LIMS: "LIMS aktueller"
+recency_EQUAL: "Gleich aktuell"
+
+equality_ANY: "—"
+equality_EQUAL: "Gleich"
+equality_NOT_EQUAL: "Ungleich"
+
+# Boolean
+bool_true: "ja"
+bool_false: "nein"
+
+# Failure
+failure_suffix: "fehlgeschlagen"
+
+# Summary
+summary_patients: "Patienten"
+summary_patient: "Patient"
+summary_severity: "Severity"
