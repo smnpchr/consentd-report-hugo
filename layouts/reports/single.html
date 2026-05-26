@@ -66,17 +66,17 @@
         <tbody>
           <tr>
             <td>{{ i18n "label_aggregated" }}</td>
-            <td class="col-ist">{{ i18n (printf "aggregated_%s" ($thsEval.aggregated | default "EMPTY")) }}</td>
-            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $thsRule.aggregated "prefix" "aggregated_") }}</td>
-            <td class="col-ist">{{ i18n (printf "aggregated_%s" ($limsEval.aggregated | default "EMPTY")) }}</td>
-            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $limsRule.aggregated "prefix" "aggregated_") }}</td>
+            <td class="col-ist">{{ partial "report-aggregated-cell" ($thsEval.aggregated | default "EMPTY") }}</td>
+            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $thsRule.aggregated "prefix" "aggregated_" "cssPrefix" "aggregated-val") }}</td>
+            <td class="col-ist">{{ partial "report-aggregated-cell" ($limsEval.aggregated | default "EMPTY") }}</td>
+            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $limsRule.aggregated "prefix" "aggregated_" "cssPrefix" "aggregated-val") }}</td>
           </tr>
           <tr>
             <td>{{ i18n "label_validity" }}</td>
-            <td class="col-ist">{{ i18n (printf "validity_%s" ($thsEval.timeValidity | default "NONE")) }}</td>
-            <td class="col-rule">{{ i18n (printf "validity_%s" ($thsRule.timeValidity | default "ANY")) }}</td>
-            <td class="col-ist">{{ i18n (printf "validity_%s" ($limsEval.timeValidity | default "NONE")) }}</td>
-            <td class="col-rule">{{ i18n (printf "validity_%s" ($limsRule.timeValidity | default "ANY")) }}</td>
+            <td class="col-ist">{{ partial "report-timevalidity-cell" ($thsEval.timeValidity | default "NONE") }}</td>
+            <td class="col-rule">{{ partial "report-timevalidity-cell" ($thsRule.timeValidity | default "ANY") }}</td>
+            <td class="col-ist">{{ partial "report-timevalidity-cell" ($limsEval.timeValidity | default "NONE") }}</td>
+            <td class="col-rule">{{ partial "report-timevalidity-cell" ($limsRule.timeValidity | default "ANY") }}</td>
           </tr>
         </tbody>
       </table>

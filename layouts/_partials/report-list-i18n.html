@@ -1,13 +1,22 @@
 {{/* Renders a list of enum values as comma-separated, i18n-translated string.
+     Optionally wraps each item in a styled badge.
+     Params:
+       list      — slice of enum values
+       prefix    — i18n key prefix (e.g. "aggregated_")
+       cssPrefix — optional CSS class prefix (e.g. "aggregated-val"); when set,
+                   each item is wrapped in <span class="{cssPrefix} {cssPrefix}-{value}">…</span>
      If list is nil/empty, returns an em-dash.
-     Params: list (slice), prefix (string for i18n key, e.g. "aggregated_")
 */}}
 {{ $list := .list }}
 {{ $prefix := .prefix }}
-{{ if $list }}
-{{- $translated := slice -}}
-{{- range $list -}}
-  {{- $translated = $translated | append (i18n (printf "%s%s" $prefix .)) -}}
-{{- end -}}
-{{- delimit $translated ", " -}}
-{{ else }}&mdash;{{ end }}
+{{ $cssPrefix := .cssPrefix }}
+{{ if $list -}}
+  {{- range $i, $v := $list -}}
+    {{- if $i }}, {{ end -}}
+    {{- if $cssPrefix -}}
+      <span class="{{ $cssPrefix }} {{ $cssPrefix }}-{{ $v }}">{{ i18n (printf "%s%s" $prefix $v) }}</span>
+    {{- else -}}
+      {{- i18n (printf "%s%s" $prefix $v) -}}
+    {{- end -}}
+  {{- end -}}
+{{- else -}}&mdash;{{- end -}}

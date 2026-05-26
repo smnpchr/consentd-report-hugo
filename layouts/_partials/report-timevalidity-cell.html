@@ -1,0 +1,7 @@
+{{/* Renders a timeValidity value as a styled badge. Empty/nil → em-dash. */}}
+{{ $val := . }}
+{{- if eq $val nil -}}
+&mdash;
+{{- else -}}
+<span class="timevalidity-val timevalidity-val-{{ $val }}">{{ i18n (printf "validity_%s" $val) }}</span>
+{{- end -}}

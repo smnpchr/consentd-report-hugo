@@ -1,0 +1,7 @@
+{{/* Renders an aggregated value (ContentAggregation enum) as a styled badge. Empty/nil → em-dash. */}}
+{{ $val := . }}
+{{- if eq $val nil -}}
+&mdash;
+{{- else -}}
+<span class="aggregated-val aggregated-val-{{ $val }}">{{ i18n (printf "aggregated_%s" $val) }}</span>
+{{- end -}}
