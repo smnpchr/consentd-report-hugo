@@ -125,58 +125,14 @@ Body: minimal — typically `# {title}`.
 
 ### Patient Detail (leaf page)
 
-Top-level fields drive navigation and the severity banner; the nested
-`ruleSpec` / `evaluation` / `consent` objects feed the detail tables.
+The leaf page front matter is a 1:1 Jackson serialization of the Java
+domain records — `rule` (DecisionRule), `evaluation` (RuleEvaluation),
+`consent` (THS + LIMS BioBankConsent), optional `failureInfo`. Top-level
+`severity` drives the banner; the nested objects feed the detail tables.
 
-```yaml
----
-title: "INT-AFFIRMED"
-date: 2026-05-19T18:30:01+02:00
-severity: info
-rule: NEW_AFFIRMED_THS
-actions: [IMPORT, REPORT]
-ruleSpec:
-  description: "Neuer gültiger bestätigter Consent, LIMS leer"
-  ths:    { aggregated: [AFFIRMED] }
-  lims:   { aggregated: [EMPTY] }
-  recency: ANY
-  equality: ANY
-evaluation:
-  ths:    { aggregated: AFFIRMED, validity: VALID }
-  lims:   { aggregated: EMPTY, validity: NONE }
-  recency: ANY
-  equality: ANY
-consent:
-  ths:
-    acquireUseStock: GRANTED
-    additionalAcquisition: GRANTED
-    retrospectiveUsage: GRANTED
-    nonEuTransfer: GRANTED
-    validFrom: 2026-04-19
-    validUntil: 2027-05-19
-    expired: false
-  lims:
-    acquireUseStock: EMPTY
-    additionalAcquisition: EMPTY
-    retrospectiveUsage: EMPTY
-    nonEuTransfer: EMPTY
----
-```
-
-On action-handler failure (severity `critical`), add top-level
-`failureAction` and `failureReason`.
-
-| Field | Used by |
-|-------|---------|
-| `title` | Sidebar, page title |
-| `date` | Hugo sort order |
-| `severity` | Sidebar dot, severity banner, badge in patient table |
-| `rule` | Severity banner, patient table |
-| `actions` | Patient table, actions list (template) |
-| `ruleSpec.*` | Rule description in detail template |
-| `evaluation.*` | Evaluation table (THS/LIMS aggregated, validity, recency, equality) |
-| `consent.*` | Consent comparison table (per-module THS/LIMS values, diff highlighting) |
-| `failureAction`, `failureReason` | Failure banner + strikethrough on failed action (only when set) |
+See `docs/front-matter-convention.md` for the canonical schema, field
+tables, and the full enum value lists. Example fixtures live in
+`content/reports/2026-05-19/`.
 
 Body: minimal — typically `# {patientId}`.
 
@@ -197,13 +153,13 @@ Body: minimal — typically `# {patientId}`.
 - Summary pages show severity counter badges
 
 ### Detail Pages
-- Severity banner at top (colored bar with icon), rendered from `severity` + `rule`
-- Rule section: name + `ruleSpec.description`
-- Evaluation table: rendered from `evaluation.*`
+- Severity banner at top (colored bar with icon), rendered from `severity` + `rule.name`
+- Rule section: `rule.name` + `rule.description`
+- Evaluation table: rendered from `evaluation.thsEvaluation` / `evaluation.limsEvaluation` against `rule.ths` / `rule.lims`; aggregated and timeValidity values rendered as styled badges; affirmations and content sub-sections shown only when the rule specifies `affirmed` or `content` maps
 - Consent comparison table: rendered from `consent.ths` and `consent.lims`, differing modules get `.row-diff`
-- Actions list: rendered from `actions`; the entry matching `failureAction` gets `.action-failed`
-- Failure banner (only when `failureAction` is set)
-- All German labels resolved via `i18n/de.yaml`
+- Actions list: rendered from `rule.actions`; the entry matching `failureInfo.failureAction` gets `.action-failed`
+- Failure banner (only when `failureInfo` is set)
+- All German labels resolved via `i18n/de.yaml` — module keys exist in both camelCase (POJO fields) and ALL_CAPS (Java enum map keys)
 - No JavaScript required for detail pages
 
 ### CSS Variables (to be defined in custom CSS)
