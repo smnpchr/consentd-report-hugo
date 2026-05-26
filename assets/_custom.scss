@@ -31,6 +31,10 @@
   border-left: 4px solid;
 }
 
+.severity-banner + .severity-banner {
+  margin-top: -0.5rem;
+}
+
 .severity-banner-info {
   background: #eff4ff;
   border-color: var(--severity-info);
@@ -87,6 +91,120 @@
   margin-bottom: 0.5rem;
 }
 
+/* === Add to existing _custom.scss === */
+
+/* ─── Failure section ──────────────────────────────────────── */
+
+.report-failure {
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+.report-failure h2 {
+  color: #991b1b;
+  margin-top: 0;
+}
+
+.failure-reason {
+  font-family: monospace;
+  font-size: 0.9em;
+  color: #4b5563;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+/* ─── Quad-column tables ──────────────────────────────────── */
+
+.report-table-quadcol thead tr:first-child th {
+  text-align: center;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.report-table-quadcol .group-ths {
+  background: rgba(59, 130, 246, 0.06);   /* subtle blue tint */
+}
+
+.report-table-quadcol .group-lims {
+  background: rgba(168, 85, 247, 0.06);   /* subtle purple tint */
+}
+
+.report-table-quadcol .col-ist {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.report-table-quadcol .col-rule {
+  background: rgba(0, 0, 0, 0.04);
+  font-size: 0.9em;
+  color: #6b7280;
+}
+
+.report-table-quadcol th.col-ist,
+.report-table-quadcol th.col-rule {
+  font-size: 0.8em;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* ─── Dual-column table (recency / equality) ────────────────── */
+
+.report-table-dual th.col-ist,
+.report-table-dual th.col-rule {
+  font-size: 0.8em;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.report-table-dual .col-rule {
+  font-size: 0.9em;
+  color: #6b7280;
+}
+
+/* ─── Subsection layout ────────────────────────────────────── */
+
+.report-subsection h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+/* === Replace existing .report-subsections rule in _custom.scss === */
+
+.report-subsections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.report-subsections .report-subsection {
+  margin-top: 0;
+}
+
+/* Affirmation indicators */
+.affirmation-yes {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.affirmation-no {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 .report-table {
   width: 100%;
   border-collapse: collapse;
@@ -112,10 +230,11 @@
 }
 
 .module-val-GRANTED     { background: #dcfce7; color: #166534; }
-.module-val-REFUSED     { background: #fee2e2; color: #991b1b; }
-.module-val-UNKNOWN     { background: #f3f4f6; color: #4b5563; }
-.module-val-NOT_PRESENT { background: #f3f4f6; color: #6b7280; font-style: italic; }
-.module-val-EMPTY       { background: transparent; color: #9ca3af; }
+.module-val-DECLINED    { background: #fee2e2; color: #991b1b; }
+.module-val-REVOKED     { background: #ffedd5; color: #9a3412; }
+.module-val-UNANSWERED  { background: #f3f4f6; color: #4b5563; }
+.module-val-UNAVAILABLE { background: #f3f4f6; color: #6b7280; font-style: italic; }
+.module-val-EMPTY { background: transparent; color: #9ca3af; }
 
 .consent-validity {
   margin-top: 0.75rem;
@@ -148,4 +267,39 @@
 /* Summary patient table */
 .book-article > table {
   width: 100%;
+}
+
+/* === Add to existing _custom.scss === */
+
+/* ─── Validity badges (analog to module badges) ────────────── */
+
+.validity-badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.validity-valid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.validity-expired {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ─── Visual separation between module-group and validity-group ── */
+
+.report-table-consent tbody + tbody {
+  /* small extra spacing before the validity rows */
+  border-top: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.report-table-consent tbody.validity-group td {
+  font-size: 0.92em;
+  color: #4b5563;
 }

@@ -5,12 +5,11 @@
   {{- else if eq . "error" }}&#x274C; {{ i18n "severity_error" }}
   {{- else if eq . "critical" }}&#x1F6A8; {{ i18n "severity_critical" }}
   {{- end -}}
-  {{- with $.Params.rule }} &mdash; {{ . }}{{ end -}}
 </div>
 {{- end -}}
 
-{{- with .Params.failureAction -}}
-<div class="severity-banner severity-banner-critical" style="margin-top: -0.5rem;">
-  <strong>{{ . }} {{ i18n "failure_suffix" }}</strong>: {{ $.Params.failureReason }}
+{{- with .Params.failureInfo -}}
+<div class="severity-banner severity-banner-critical">
+  <strong>{{ .failureAction }} {{ i18n "failure_suffix" }}</strong>: {{ .failureReason }}
 </div>
 {{- end -}}

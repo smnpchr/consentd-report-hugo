@@ -1,0 +1,15 @@
+{{/* Renders a validity badge based on the consent's expired flag.
+     Input: a consent object (with .expired field) or nil.
+     - expired=true  → "Abgelaufen" (red)
+     - expired=false → "Gültig" (green)
+     - nil           → em-dash
+*/}}
+{{- if . -}}
+  {{- if .expired -}}
+    <span class="validity-badge validity-expired">{{ i18n "label_expired" }}</span>
+  {{- else -}}
+    <span class="validity-badge validity-valid">{{ i18n "label_valid" }}</span>
+  {{- end -}}
+{{- else -}}
+&mdash;
+{{- end -}}

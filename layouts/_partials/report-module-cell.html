@@ -1,0 +1,7 @@
+{{/* Renders a module status as styled badge. Empty/nil → em-dash. */}}
+{{ $val := . }}
+{{- if eq $val nil -}}
+&mdash;
+{{- else -}}
+<span class="module-val module-val-{{ $val }}">{{ i18n (printf "module_%s" $val) }}</span>
+{{- end -}}

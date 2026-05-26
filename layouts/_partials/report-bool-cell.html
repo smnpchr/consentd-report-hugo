@@ -1,0 +1,9 @@
+{{/* Renders a boolean as a styled badge. Empty/nil → em-dash. */}}
+{{ $val := . }}
+{{- if eq $val nil -}}
+&mdash;
+{{- else if eq $val true -}}
+<span class="affirmation-yes">{{ i18n "bool_true" }}</span>
+{{- else -}}
+<span class="affirmation-no">{{ i18n "bool_false" }}</span>
+{{- end -}}

@@ -1,38 +1,44 @@
 # Frontmatter-Konvention — consentd-report-hugo
 
-Diese Konvention definiert das Schema der YAML-Frontmatter, die von
-`HugoBookGenerator` (consentd Java) erzeugt und vom Hugo-Book-Theme
-gerendert werden.
+Diese Konvention beschreibt das YAML-Frontmatter der Markdown-Dateien,
+die vom Java-Generator (`HugoBookGenerator` im consentd-Projekt) erzeugt
+und vom Hugo-Book-Theme dieses Repos gerendert werden.
 
 ## Designprinzipien
 
 - **Alle strukturierten Daten leben im Frontmatter.** Der Markdown-Body
-  ist minimal (ggf. nur ein H1) und nicht für Datentransport vorgesehen.
-- **Feldnamen sind camelCase**, wie sie aus den Java-Record-Komponenten
-  exportiert werden. Ausnahmen: Hugo-Built-in-Felder (`title`, `date`,
-  `weight`) folgen Hugo-Konvention; das deckt sich aber mit camelCase.
-- **Optionale Felder werden weggelassen** (nicht als `null` geschrieben).
-  Ein fehlendes Feld bedeutet „nicht zutreffend" oder „kein Wert".
+  ist minimal (nur `# {title}`) und nicht für Datentransport vorgesehen.
+- **Direkte Serialisierung der Domain-Klassen.** Das Frontmatter ist
+  weitgehend die 1:1-Jackson-Serialisierung der Java-Domain-Records
+  und -Klassen (`BioBankConsent`, `ConsentEvaluation`, `DecisionRule`).
+  Es gibt keine separate DTO-Schicht; die Feldnamen entsprechen den
+  Java-Komponenten- bzw. Property-Namen.
+- **Feldnamen sind camelCase**, wie die Java-Komponenten — mit Ausnahme
+  der Map-Keys, die ALL_CAPS_SNAKE_CASE sind (Enum-Namen aus
+  `ConsentModule`).
+- **Hugo-Built-in-Felder** (`title`, `date`, `weight`,
+  `bookCollapseSection`) folgen Hugo-Konvention — passt zufällig zu
+  camelCase.
+- **Optionale Felder werden weggelassen** (Jackson `NON_EMPTY`
+  Serialization-Inclusion). Ein fehlendes Feld bedeutet „nicht
+  zutreffend" oder „leer". Insbesondere fehlen leere Maps und leere
+  Listen komplett aus dem YAML.
 - **Enum-Werte werden als Strings ausgegeben**, in ihrer Java-Form
-  (`INCONSISTENT`, `EMPTY`, `UNKNOWN`). Menschen-lesbare Labels werden
-  vom Theme über i18n übersetzt.
-- **Bewusste Doppelung auf Top-Level**: `severity`, `rule`, `actions`
-  stehen sowohl als Top-Level-Felder als auch in den verschachtelten
-  Sektionen. Top-Level dient als schneller Filter/Sortier-Schlüssel für
-  Hugo-Range-Operationen.
+  (`AFFIRMED`, `INCONSISTENT`, `GRANTED`, `UNANSWERED` etc.).
+  Menschen-lesbare Labels werden vom Theme über i18n übersetzt.
 
 ## Zwei Dokumenttypen
 
 ### 1. Section Index — `_index.md`
 
-Wird einmal pro Sync-Run geschrieben (pro `EvaluationStage`). Enthält
+Wird einmal pro Sync-Run pro `EvaluationStage` geschrieben. Enthält
 Aggregate über alle Patienten des Laufs.
 
 ```yaml
 ---
-title: "20.05.2026"
-date: 2026-05-20T17:07:43+02:00
-weight: 20260520
+title: "19.05.2026"
+date: 2026-05-19T18:30:00+02:00
+weight: 20260519
 bookCollapseSection: true
 patientCount: 5
 severityInfo: 1
@@ -44,175 +50,298 @@ severityCritical: 1
 
 **Felder:**
 
-| Feld | Typ | Quelle | Beschreibung |
-|---|---|---|---|
-| `title` | String | Collector | Vom `ActionCollector.init(title)` gesetzt |
-| `date` | DateTime | Run-Time | ISO mit Offset |
-| `weight` | int | Run-Time | `yyyyMMdd`, für Hugo-Sortierung |
-| `bookCollapseSection` | boolean | konstant `true` | Hugo-Book-Theme-Konvention |
-| `patientCount` | int | `entries.size()` | Anzahl ausgewerteter Patienten |
-| `severityInfo`<br>`severityWarning`<br>`severityError`<br>`severityCritical` | long | Aggregate | Anzahl Entries pro Severity-Stufe |
+| Feld | Typ | Quelle / Beschreibung |
+|---|---|---|
+| `title` | String | Vom `ActionCollector.init(title)` gesetzt |
+| `date` | DateTime mit Offset | Zeitpunkt des Sync-Runs |
+| `weight` | int | `yyyyMMdd`-Format, für Hugo-Sortierung |
+| `bookCollapseSection` | boolean | Hugo-Book-Theme-Konvention, immer `true` |
+| `patientCount` | int | Anzahl ausgewerteter Patienten |
+| `severityInfo` / `severityWarning` / `severityError` / `severityCritical` | long | Aggregate-Counter pro Severity |
 
 ### 2. Detail — `<patientId>.md`
 
-Wird einmal pro Patient pro Sync-Run geschrieben. Enthält die vollständigen
-strukturierten Daten der Auswertung.
+Wird einmal pro Patient pro Sync-Run geschrieben. Enthält die
+vollständigen strukturierten Daten der Auswertung.
+
+Vollständiges Beispiel (kanonisches Test-Fixture):
 
 ```yaml
 ---
-title: "INT-AFFIRMED-001"
-date: 2026-05-20T17:07:43+02:00
-severity: error
-rule: THS_INCONSISTENT
-actions: [REPORT]
-ruleSpec:
-  description: "Inkonsistenter THS-Consent"
+title: XXX
+date: 2026-05-26T16:28:15+02:00
+severity: critical
+rule:
+  name: NEW_AFFIRMED_THS
+  stage: IMPORT
   ths:
-    aggregated: [INCONSISTENT]
+    timeValidity: VALID
+    aggregated:
+    - AFFIRMED
   lims:
-    aggregated: [ANY]
+    timeValidity: ANY
+    aggregated:
+    - EMPTY
   recency: ANY
   equality: ANY
+  severity: INFO
+  actions:
+  - IMPORT
+  - REPORT
+  onFail:
+    severity: CRITICAL
+    actions:
+    - REPORT
+  stopEvaluation: false
+  description: "Neuer bestätigter THS-Consent, LIMS leer"
+failureInfo:
+  failureAction: IMPORT
+  failureReason: "de.acme.common.exceptions.FailedImportException: 400 - Bad Request"
 evaluation:
-  ths:
-    aggregated: INCONSISTENT
-    validity: VALID
-  lims:
+  thsEvaluation:
+    timeValidity: VALID
+    aggregated: AFFIRMED
+    affirmations:
+      NON_EU_TRANSFER: true
+      ACQUIRE_USE_STOCK: true
+      ADDITIONAL_ACQUISITION: true
+      RETROSPECTIVE_USAGE: false
+    content:
+      NON_EU_TRANSFER: GRANTED
+      ACQUIRE_USE_STOCK: GRANTED
+      ADDITIONAL_ACQUISITION: GRANTED
+      RETROSPECTIVE_USAGE: UNANSWERED
+  limsEvaluation:
+    timeValidity: NONE
     aggregated: EMPTY
-    validity: NONE
   recency: THS
   equality: NOT_EQUAL
 consent:
   ths:
-    acquireUseStock: UNKNOWN
-    additionalAcquisition: UNKNOWN
-    retrospectiveUsage: NOT_PRESENT
-    nonEuTransfer: UNKNOWN
-    validFrom: 2026-04-13
-    validUntil: 2031-04-13
+    patientId: XXX
+    validFrom: 2025-08-11
+    validUntil: 2055-08-11
+    acquireUseStock: GRANTED
+    additionalAcquisition: GRANTED
+    retrospectiveUsage: UNANSWERED
+    nonEuTransfer: GRANTED
     expired: false
-  lims:
-    acquireUseStock: EMPTY
-    additionalAcquisition: EMPTY
-    retrospectiveUsage: EMPTY
-    nonEuTransfer: EMPTY
 ---
+
+# XXX
 ```
 
-**Top-Level-Felder:**
+#### Top-Level-Felder
 
-| Feld | Typ | Quelle | Beschreibung |
-|---|---|---|---|
-| `title` | String | `entry.patientId()` | Patient-Identifier |
-| `date` | DateTime | Run-Time | ISO mit Offset |
-| `severity` | String (lowercase) | `entry.severity()` | `info`, `warning`, `error`, `critical` |
-| `rule` | String | `entry.rule().getName()` | Name der getroffenen Regel |
-| `actions` | List<String> | `entry.rule().getActions()` | Enum-Namen der Aktionen |
-
-**Optional auf Top-Level (nur bei Action-Handler-Fehler):**
-
-| Feld | Typ | Bedingung |
+| Feld | Typ | Beschreibung |
 |---|---|---|
-| `failureAction` | String | `entry.exception() != null` |
-| `failureReason` | String | `entry.exception() != null` |
+| `title` | String | Patient-Identifier |
+| `date` | DateTime | Zeitpunkt der Auswertung, ISO mit Offset |
+| `severity` | String (lowercase) | Effektive Severity nach OnFail: `info`, `warning`, `error`, `critical` |
+| `rule` | Objekt | Die getroffene Regel (siehe unten) |
+| `failureInfo` | Objekt, optional | Nur vorhanden, wenn eine Action fehlgeschlagen ist |
+| `evaluation` | Objekt | Auswertungsergebnis pro Quelle |
+| `consent` | Objekt | Aktueller Consent-Stand pro Quelle |
 
-**`ruleSpec`** — Spezifikation der Regel (was geprüft wurde):
+#### `rule` — getroffene Regel
+
+Direkte Serialisierung von `DecisionRule`. Enthält sowohl Spezifikation
+(was die Regel prüft) als auch Metadaten (Severity, Actions etc.).
+
+| Feld | Typ | Beschreibung |
+|---|---|---|
+| `name` | String | Regel-Identifier (z.B. `THS_INCONSISTENT`) |
+| `description` | String | Aus `RuleName.description()` |
+| `stage` | String | `IMPORT` oder `OPERATIONAL` |
+| `severity` | String (UPPERCASE) | Severity der Regel — kann von Top-Level abweichen bei OnFail |
+| `actions` | List<String> | Auszuführende Aktionen (`IMPORT`, `REPORT`, `INVALIDATE`, ...) |
+| `recency` | String | Erwartete Aktualitäts-Bedingung (`ANY`, `THS`, `LIMS`, `EQUAL`, `NONE`) |
+| `equality` | String | Erwartete Gleichheits-Bedingung (`ANY`, `EQUAL`, `AFFIRMATIONS_EQUAL`, `NOT_EQUAL`, `NONE`) |
+| `ths` | Objekt | `ConsentEvalDef` für THS-Seite |
+| `lims` | Objekt | `ConsentEvalDef` für LIMS-Seite |
+| `onFail` | Objekt | Fallback-Konfiguration bei Action-Failure |
+| `stopEvaluation` | boolean | Engine-internes Flag |
+
+#### `rule.ths` / `rule.lims` — Eval-Def pro Quelle
+
+Direkte Serialisierung von `ConsentEvalDef`. Beschreibt, welche
+Bedingungen die Regel an die jeweilige Quelle stellt.
+
+| Feld | Typ | Beschreibung |
+|---|---|---|
+| `timeValidity` | String | Erwartete Gültigkeit (`ANY`, `VALID`, `EXPIRED`, `NONE`) |
+| `aggregated` | List<String> | Erlaubte Aggregations-Werte. Wildcard: `[ANY]` |
+| `affirmed` | Map<String, Boolean>, optional | Bei Affirmations-Rules: Soll-Werte pro Modul |
+| `content` | Map<String, String>, optional | Bei Content-Rules: Soll-Werte pro Modul (`ModuleStatus`-Enum) |
+
+`affirmed` und `content` werden bei leeren Maps weggelassen.
+
+#### `failureInfo` — optionaler Fehler-Block
+
+Direkte Serialisierung des `FailureInfo`-Records. Wird nur erzeugt, wenn
+eine Action während des Sync-Runs eine Exception geworfen hat.
+
+| Feld | Typ | Beschreibung |
+|---|---|---|
+| `failureAction` | String | Welche Action fehlgeschlagen ist |
+| `failureReason` | String | Aus `ActionHandlerException.displayableReason()` |
+
+#### `evaluation` — Auswertungsergebnis
+
+Direkte Serialisierung von `RuleEvaluation`. Die Per-Quelle-Auswertungen
+heißen wegen Java-Naming `thsEvaluation` und `limsEvaluation`, nicht
+`ths`/`lims`.
+
+| Feld | Typ | Beschreibung |
+|---|---|---|
+| `thsEvaluation` | Objekt | `ConsentEvaluation` für THS |
+| `limsEvaluation` | Objekt | `ConsentEvaluation` für LIMS |
+| `recency` | String | Tatsächlich ermittelte Aktualitäts-Beziehung |
+| `equality` | String | Tatsächlich ermittelte Gleichheits-Beziehung |
+
+#### `evaluation.thsEvaluation` / `evaluation.limsEvaluation`
+
+Direkte Serialisierung von `ConsentEvaluation`.
+
+| Feld | Typ | Beschreibung |
+|---|---|---|
+| `timeValidity` | String | `VALID`, `EXPIRED`, `NONE` |
+| `aggregated` | String | Aggregierter Auswertungs-Wert |
+| `affirmations` | Map<String, Boolean>, optional | Pro-Modul-Bejahung |
+| `content` | Map<String, String>, optional | Pro-Modul-Status |
+
+`affirmations` und `content` sind bei leerem Consent (kein Datenpunkt)
+nicht vorhanden — `NON_EMPTY`-Strategy lässt sie weg.
+
+#### `consent` — Aktueller Consent-Stand
+
+Wrapper-Record, gruppiert die zwei unabhängigen Per-Quellen-Consents
+zur Theme-Convenience.
 
 | Pfad | Typ | Beschreibung |
 |---|---|---|
-| `ruleSpec.description` | String | Optionale Beschreibung |
-| `ruleSpec.ths.aggregated` | List<String> | Erwartete THS-Consent-Werte |
-| `ruleSpec.ths.timeValidity` | String | Optional, nur wenn != `ANY` |
-| `ruleSpec.lims.aggregated` | List<String> | Erwartete LIMS-Consent-Werte |
-| `ruleSpec.lims.timeValidity` | String | Optional, nur wenn != `ANY` |
-| `ruleSpec.recency` | String | Erwartete Aktualitäts-Bedingung |
-| `ruleSpec.equality` | String | Erwartete Gleichheits-Bedingung |
+| `consent.ths` | `BioBankConsent`, optional | THS-Consent, falls vorhanden |
+| `consent.lims` | `BioBankConsent`, optional | LIMS-Consent, falls vorhanden |
 
-**`evaluation`** — Ergebnis der Auswertung (was tatsächlich vorlag):
+#### `consent.ths` / `consent.lims`
 
-| Pfad | Typ | Beschreibung |
+Direkte Serialisierung von `BioBankConsent` (Lombok `@Data`-POJO).
+Wird komplett weggelassen, wenn die jeweilige Quelle keinen Consent hat.
+
+| Feld | Typ | Beschreibung |
 |---|---|---|
-| `evaluation.ths.aggregated` | String | Aggregierter THS-Consent-Wert |
-| `evaluation.ths.validity` | String | THS-Validity (`VALID`, `NONE`, etc.) |
-| `evaluation.lims.aggregated` | String | Aggregierter LIMS-Consent-Wert |
-| `evaluation.lims.validity` | String | LIMS-Validity |
-| `evaluation.recency` | String | Tatsächliche Aktualitäts-Bewertung |
-| `evaluation.equality` | String | Tatsächliche Gleichheits-Bewertung |
-
-**`consent`** — Modulvergleich (THS- und LIMS-Werte pro Modul):
-
-| Pfad | Typ | Beschreibung |
-|---|---|---|
-| `consent.ths.acquireUseStock` | String | Modul „Gewinnung & Nutzung" (THS) |
-| `consent.ths.additionalAcquisition` | String | Modul „Zusätzliche Entnahme" (THS) |
-| `consent.ths.retrospectiveUsage` | String | Modul „Retrospektive Nutzung" (THS) |
-| `consent.ths.nonEuTransfer` | String | Modul „Nicht-EU-Weitergabe" (THS) |
-| `consent.ths.validFrom` | Date | Gültig von (optional, falls Consent vorhanden) |
-| `consent.ths.validUntil` | Date | Gültig bis (optional) |
-| `consent.ths.expired` | boolean | Abgelaufen? (optional) |
-| `consent.lims.*` | – | Identische Struktur wie `consent.ths.*` |
-
-Falls THS oder LIMS für einen Patienten gar nicht vorliegt, wird die
-gesamte Sub-Sektion (`consent.ths` bzw. `consent.lims`) weggelassen.
-Falls einzelne Module fehlen, sind die jeweiligen Felder weggelassen.
+| `patientId` | String | Patient-Identifier (redundant zu Top-Level `title`) |
+| `validFrom` | Date | Gültigkeits-Beginn |
+| `validUntil` | Date | Gültigkeits-Ende |
+| `acquireUseStock` | String | `ModuleStatus`-Enum-Wert |
+| `additionalAcquisition` | String | `ModuleStatus`-Enum-Wert |
+| `retrospectiveUsage` | String | `ModuleStatus`-Enum-Wert |
+| `nonEuTransfer` | String | `ModuleStatus`-Enum-Wert |
+| `expired` | boolean | Berechnet zum Erstellungszeitpunkt des Reports |
 
 ## Statuswerte
 
-Konsent-Modul-Werte (`acquireUseStock` etc.):
+### `ModuleStatus` (Modul-Werte)
+
+| Wert | Bedeutung | Quelle |
+|---|---|---|
+| `GRANTED` | Zustimmung erteilt | THS + LIMS |
+| `DECLINED` | Aktiv verweigert | THS + LIMS |
+| `UNANSWERED` | Nicht angekreuzt | THS-only (LIMS kann's nicht repräsentieren) |
+| `REVOKED` | Widerrufen | LIMS-only (THS kann's nicht repräsentieren) |
+| `UNAVAILABLE` | Kein Datenpunkt vorliegend | THS + LIMS |
+
+Zusätzlich kann der String `EMPTY` als Frontmatter-Marker auftauchen —
+das ist kein `ModuleStatus`-Wert, sondern signalisiert „Quelle hat
+diesen Datenpunkt gar nicht geliefert".
+
+### `ContentAggregation` (Aggregations-Werte in `aggregated`-Feldern)
 
 | Wert | Bedeutung |
 |---|---|
-| `GRANTED` | Zustimmung erteilt |
-| `REFUSED` | Verweigert |
-| `UNKNOWN` | Unbekannt |
-| `NOT_PRESENT` | Modul nicht im Consent enthalten |
-| `EMPTY` | Kein Wert vorliegend |
+| `ANY` | Wildcard, nur in `rule.*.aggregated` |
+| `EMPTY` | Quelle ist leer / hat keinen Consent |
+| `INCONSISTENT` | Consent ist in sich widersprüchlich |
+| `DECLINED` | Vollständig abgelehnt (`fullyDeclined`) |
+| `REVOKED` | Wirksam widerrufen (`effectivelyRevoked`) |
+| `AFFIRMED` | Trag-Punkt bejaht (MII-Broad-Consent-Semantik) |
+| `CONSISTENT` | Wildcard-artiger Match für jede konsistente Variante |
 
-Aggregations-Werte (`evaluation.ths.aggregated` etc.):
-
-| Wert | Bedeutung |
-|---|---|
-| `AFFIRMED` | Bejaht |
-| `DECLINED` | Verneint |
-| `REVOKED` | Widerrufen |
-| `INCONSISTENT` | Inkonsistent |
-| `EMPTY` | Kein Eintrag |
-| `ANY` | Wildcard (nur in `ruleSpec`) |
-
-Validity-Werte:
+### `TimeValidity`
 
 | Wert | Bedeutung |
 |---|---|
-| `VALID` | Gültig |
+| `ANY` | Wildcard, nur in `rule.*.timeValidity` |
+| `NONE` | Keine zeitliche Information / kein Consent |
+| `VALID` | Aktuell gültig |
 | `EXPIRED` | Abgelaufen |
-| `NONE` | Nicht vorhanden |
+
+### `Recency` (Aktualitäts-Beziehung)
+
+| Wert | Bedeutung |
+|---|---|
+| `ANY` | Wildcard |
+| `NONE` | Keine Quelle vorhanden |
+| `EQUAL` | THS und LIMS gleich aktuell |
+| `THS` | THS ist aktueller |
+| `LIMS` | LIMS ist aktueller |
+
+### `Equality` (Gleichheits-Beziehung)
+
+| Wert | Bedeutung |
+|---|---|
+| `ANY` | Wildcard |
+| `NONE` | Keine Quelle vorhanden |
+| `EQUAL` | Inhaltlich identisch |
+| `AFFIRMATIONS_EQUAL` | Gleich auf Affirmations-Ebene, nicht auf Modul-Status |
+| `NOT_EQUAL` | Inhaltlich unterschiedlich |
+
+## Modul-Namen (Map-Keys in `affirmations` / `content`)
+
+Die Map-Keys in `affirmations` und `content` sind ALL_CAPS-Enum-Namen
+aus `ConsentModule`:
+
+- `ACQUIRE_USE_STOCK` — Gewinnung, Lagerung, Nutzung
+- `ADDITIONAL_ACQUISITION` — Zusätzliche Entnahme
+- `RETROSPECTIVE_USAGE` — Retrospektive Nutzung
+- `NON_EU_TRANSFER` — Nicht-EU-Weitergabe
+
+Auf POJO-Ebene (`consent.ths` / `consent.lims`) sind die Feldnamen
+hingegen camelCase: `acquireUseStock`, `additionalAcquisition`,
+`retrospectiveUsage`, `nonEuTransfer`. Das ist die Folge der
+Java-Konvention (Map-Keys via `ConsentModule.name()` vs.
+POJO-Properties via Lombok-Getter).
+
+Die i18n-Keys im Theme decken beide Schreibweisen ab.
 
 ## Body-Konvention
 
 Der Markdown-Body ist minimal:
 
 ```markdown
-# {patientId}
+# {title}
 ```
 
 Mehr nicht. Alle Darstellung erfolgt im Theme aus dem Frontmatter.
-Falls ein zweiter, plattform-unabhängiger Markdown-Output benötigt
-wird, ist ein eigener `ActionCollector` zu implementieren (nicht
-diesen Body anreichern).
 
-## Java-Korrespondenz
+Falls ein zweiter, plattform-unabhängiger Markdown-Output benötigt wird
+(z.B. für externe Auditoren ohne Hugo-Stack), ist ein eigener
+`ActionCollector` mit eigenem Generator zu implementieren — nicht
+diesen Body anreichern.
 
-Die Frontmatter-Records leben als nested Records in
-`HugoBookGenerator`:
+## Verhältnis zu den Java-Domain-Klassen
 
-- `DetailFrontmatter`
-- `SummaryFrontmatter`
+| Frontmatter-Pfad | Java-Quelle |
+|---|---|
+| `rule` | `de.ukdd.bbd.consentd.rules.DecisionRule` |
+| `rule.ths` / `rule.lims` | `de.ukdd.bbd.consentd.entity.common.ConsentEvalDef` |
+| `failureInfo` | `HugoBookGenerator.FailureInfo` (DTO-Record) |
+| `evaluation` | `de.ukdd.bbd.consentd.rules.RuleEvaluation` |
+| `evaluation.thsEvaluation` / `evaluation.limsEvaluation` | `de.ukdd.bbd.consentd.entity.common.ConsentEvaluation` |
+| `consent` | `HugoBookGenerator.Consent` (Wrapper-Record) |
+| `consent.ths` / `consent.lims` | `de.ukdd.bbd.consentd.entity.common.BioBankConsent` |
 
-Plus die Sub-Records für die verschachtelten Strukturen
-(`RuleSpec`, `EvalDef`, `Evaluation`, `EvalResult`, `ConsentSnapshot`).
-
-Die Sub-Records sind entweder eigenständig in `HugoBookGenerator`
-definiert oder — falls sie 1:1 zu Domain-Records aus
-`de.ukdd.bbd.consentd.entity.common` passen und keine
-serialisierungsfremden Felder enthalten — direkt wiederverwendet.
-Entscheidung pro Sub-Record beim Refactor.
+Änderungen an diesen Klassen propagieren ohne Mapping-Schicht direkt
+ins Frontmatter. Wenn Felder hinzukommen, die *nicht* ins Frontmatter
+sollen, müssen sie per `@JsonIgnore` auf der Quellklasse markiert
+werden.

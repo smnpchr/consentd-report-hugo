@@ -2,39 +2,57 @@
 title: "INT-INCONSISTENT"
 date: 2026-05-19T18:30:03+02:00
 severity: error
-rule: INCONSISTENT_THS
-actions: [REPORT]
-ruleSpec:
-  description: "Inkonsistenter THS-Consent"
+rule:
+  name: INCONSISTENT_THS
+  stage: IMPORT
   ths:
-    aggregated: [INCONSISTENT]
+    timeValidity: VALID
+    aggregated:
+    - INCONSISTENT
   lims:
-    aggregated: [ANY]
+    timeValidity: ANY
+    aggregated:
+    - ANY
   recency: ANY
   equality: ANY
+  severity: ERROR
+  actions:
+  - REPORT
+  onFail:
+    severity: CRITICAL
+    actions:
+    - REPORT
+  stopEvaluation: true
+  description: "Inkonsistenter THS-Consent"
 evaluation:
-  ths:
+  thsEvaluation:
+    timeValidity: VALID
     aggregated: INCONSISTENT
-    validity: VALID
-  lims:
+    affirmations:
+      ACQUIRE_USE_STOCK: false
+      ADDITIONAL_ACQUISITION: true
+      RETROSPECTIVE_USAGE: true
+      NON_EU_TRANSFER: false
+    content:
+      ACQUIRE_USE_STOCK: DECLINED
+      ADDITIONAL_ACQUISITION: GRANTED
+      RETROSPECTIVE_USAGE: GRANTED
+      NON_EU_TRANSFER: DECLINED
+  limsEvaluation:
+    timeValidity: NONE
     aggregated: EMPTY
-    validity: NONE
   recency: ANY
   equality: ANY
 consent:
   ths:
-    acquireUseStock: REFUSED
-    additionalAcquisition: GRANTED
-    retrospectiveUsage: GRANTED
-    nonEuTransfer: REFUSED
+    patientId: INT-INCONSISTENT
     validFrom: 2026-04-13
     validUntil: 2031-04-13
+    acquireUseStock: DECLINED
+    additionalAcquisition: GRANTED
+    retrospectiveUsage: GRANTED
+    nonEuTransfer: DECLINED
     expired: false
-  lims:
-    acquireUseStock: EMPTY
-    additionalAcquisition: EMPTY
-    retrospectiveUsage: EMPTY
-    nonEuTransfer: EMPTY
 ---
 
 # INT-INCONSISTENT

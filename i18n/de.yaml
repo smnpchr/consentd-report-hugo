@@ -6,10 +6,20 @@ severity_critical: "Kritisch"
 
 # Section headings (detail page)
 heading_rule: "Regel"
+heading_rule_code: "Regel-Code"
 heading_evaluation: "Evaluation"
-heading_consent: "Consent-Vergleich"
+heading_consent: "Direkter Vergleich"
 heading_actions: "Aktionen"
-heading_failure: "Fehler"
+heading_eval_generic: "Allgemein"
+heading_eval_per_consent: "Pro EWE"
+
+# Failure section
+heading_failure: "Fehlgeschlagene Aktion"
+label_failed_action: "Aktion"
+
+# Sub-section headings (if not already present)
+heading_affirmations: "Modul-Affirmation-Auswertung"
+heading_content: "Modul-Status-Auswertung"
 
 # Detail page table labels
 label_dimension: "Dimension"
@@ -23,41 +33,56 @@ label_equality: "Gleichheit"
 label_valid_from: "Gültig von"
 label_valid_until: "Gültig bis"
 label_expired: "Abgelaufen"
+label_valid: "gültig"
+label_validity_status: "Status"
+label_property: "Eigenschaft"
 
-# Module names
+# Module names (camelCase — used by consent.ths / consent.lims POJO fields)
 module_acquireUseStock: "Gewinnung/Lagerung/Nutzung"
 module_additionalAcquisition: "Zusatzentnahme"
 module_retrospectiveUsage: "Retrospektive Nutzung"
 module_nonEuTransfer: "Nicht-EU-Weitergabe"
 
+# Module names (ALL_CAPS — used as map keys in affirmations / content)
+module_ACQUIRE_USE_STOCK: "Gewinnung/Lagerung/Nutzung"
+module_ADDITIONAL_ACQUISITION: "Zusatzentnahme"
+module_RETROSPECTIVE_USAGE: "Retrospektive Nutzung"
+module_NON_EU_TRANSFER: "Nicht-EU-Weitergabe"
+
 # Aggregated values
-aggregated_AFFIRMED: "Bestätigt"
-aggregated_DECLINED: "Abgelehnt"
-aggregated_REVOKED: "Widerrufen"
-aggregated_INCONSISTENT: "Inkonsistent"
-aggregated_EMPTY: "Leer"
-aggregated_ANY: "Beliebig"
+aggregated_ANY: "beliebig"
+aggregated_EMPTY: "—"
+aggregated_INCONSISTENT: "inkonsistent"
+aggregated_DECLINED: "abgelehnt"
+aggregated_REVOKED: "widerrufen"
+aggregated_AFFIRMED: "bestätigt"
+aggregated_CONSISTENT: "konsistent"
 
 # Validity values
-validity_VALID: "Gültig"
-validity_EXPIRED: "Abgelaufen"
+validity_ANY: "beliebig"
 validity_NONE: "—"
+validity_VALID: "gültig"
+validity_EXPIRED: "abgelaufen"
 
 # Module status values
 module_GRANTED: "Erteilt"
-module_REFUSED: "Verweigert"
-module_UNKNOWN: "Unbekannt"
-module_NOT_PRESENT: "Nicht enthalten"
+module_DECLINED: "Verweigert"
+module_REVOKED: "Widerrufen"
+module_UNANSWERED: "Keine Angabe"
+module_UNAVAILABLE: "Nicht verfügbar"
 module_EMPTY: "—"
 
 # Recency / equality
-recency_ANY: "—"
+recency_ANY: "beliebig"
+recency_NONE: "—"
 recency_THS: "THS aktueller"
 recency_LIMS: "LIMS aktueller"
 recency_EQUAL: "Gleich aktuell"
 
-equality_ANY: "—"
+equality_ANY: "beliebig"
+equality_NONE: "—"
 equality_EQUAL: "Gleich"
+equality_AFFIRMATIONS_EQUAL: "Affirmationen gleich"
 equality_NOT_EQUAL: "Ungleich"
 
 # Boolean
@@ -71,3 +96,7 @@ failure_suffix: "fehlgeschlagen"
 summary_patients: "Patienten"
 summary_patient: "Patient"
 summary_severity: "Severity"
+
+label_result: "Ergebnis"
+label_rule: "Regel"
+ 

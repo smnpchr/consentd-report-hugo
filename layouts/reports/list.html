@@ -18,6 +18,7 @@
           <th>{{ i18n "summary_patient" }}</th>
           <th>{{ i18n "summary_severity" }}</th>
           <th>{{ i18n "heading_rule" }}</th>
+          <th>{{ i18n "heading_rule_code" }}</th>
           <th>{{ i18n "heading_actions" }}</th>
         </tr>
       </thead>
@@ -26,8 +27,9 @@
         <tr>
           <td><a href="{{ .RelPermalink }}">{{ .Title }}</a></td>
           <td><span class="severity-badge severity-badge-{{ .Params.severity }}">{{ i18n (printf "severity_%s" .Params.severity) }}</span></td>
-          <td>{{ .Params.rule }}</td>
-          <td>{{ delimit .Params.actions ", " }}</td>
+          <td>{{ .Params.rule.description }}</td>
+          <td>{{ .Params.rule.name }}</td>
+          <td>{{ delimit .Params.rule.actions ", " }}</td>
         </tr>
         {{ end }}
       </tbody>

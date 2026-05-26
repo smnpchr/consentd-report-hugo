@@ -1,14 +1,19 @@
 ---
-title: "INT-IMPORT-FAIL"
-date: 2026-05-19T18:30:05+02:00
-severity: critical
+title: "INT-PARTIAL-AFFIRMED"
+date: 2026-05-19T18:30:06+02:00
+severity: info
 rule:
-  name: NEW_AFFIRMED_THS
+  name: PARTIAL_AFFIRMED_THS
   stage: IMPORT
   ths:
     timeValidity: VALID
     aggregated:
     - AFFIRMED
+    affirmed:
+      ACQUIRE_USE_STOCK: true
+      ADDITIONAL_ACQUISITION: true
+      RETROSPECTIVE_USAGE: false
+      NON_EU_TRANSFER: false
   lims:
     timeValidity: ANY
     aggregated:
@@ -24,10 +29,7 @@ rule:
     actions:
     - REPORT
   stopEvaluation: false
-  description: "Neuer bestätigter THS-Consent, LIMS leer"
-failureInfo:
-  failureAction: IMPORT
-  failureReason: "de.acme.common.exceptions.FailedImportException: LIMS REST API returned 503: Service Unavailable"
+  description: "Partiell bestätigter THS-Consent (nur Basis und Zusatzentnahme), LIMS leer"
 evaluation:
   thsEvaluation:
     timeValidity: VALID
@@ -35,13 +37,13 @@ evaluation:
     affirmations:
       ACQUIRE_USE_STOCK: true
       ADDITIONAL_ACQUISITION: true
-      RETROSPECTIVE_USAGE: true
-      NON_EU_TRANSFER: true
+      RETROSPECTIVE_USAGE: false
+      NON_EU_TRANSFER: false
     content:
       ACQUIRE_USE_STOCK: GRANTED
       ADDITIONAL_ACQUISITION: GRANTED
-      RETROSPECTIVE_USAGE: GRANTED
-      NON_EU_TRANSFER: GRANTED
+      RETROSPECTIVE_USAGE: DECLINED
+      NON_EU_TRANSFER: UNANSWERED
   limsEvaluation:
     timeValidity: NONE
     aggregated: EMPTY
@@ -49,14 +51,14 @@ evaluation:
   equality: ANY
 consent:
   ths:
-    patientId: INT-IMPORT-FAIL
-    validFrom: 2026-04-19
-    validUntil: 2027-05-19
+    patientId: INT-PARTIAL-AFFIRMED
+    validFrom: 2026-05-01
+    validUntil: 2031-05-01
     acquireUseStock: GRANTED
     additionalAcquisition: GRANTED
-    retrospectiveUsage: GRANTED
-    nonEuTransfer: GRANTED
+    retrospectiveUsage: DECLINED
+    nonEuTransfer: UNANSWERED
     expired: false
 ---
 
-# INT-IMPORT-FAIL
+# INT-PARTIAL-AFFIRMED
