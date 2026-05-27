@@ -1,14 +1,61 @@
-/* consentd report severity colors */
+// ─────────────────────────────────────────────────────────────
+// consentd report — custom styles
+//
+//   1. Tokens                 CSS vars, color palette, badge mixin
+//   2. Sidebar                severity dots
+//   3. Severity banners       detail-page top banner
+//   4. Summary counters       per-severity badges on daily summary
+//   5. Report layout          sections, subsections, failure block
+//   6. Tables                 base, quad-col, dual-col, consent
+//   7. Badges                 module / aggregated / timeValidity / validity / affirmation
+//   8. Actions                rule.actions list
+//   9. Misc
+// ─────────────────────────────────────────────────────────────
+
+
+// ── 1. Tokens ─────────────────────────────────────────────────
 
 :root {
-  --severity-info: #2563eb;
-  --severity-warning: #ca8a04;
-  --severity-error: #dc2626;
+  --severity-info:     #2563eb;
+  --severity-warning:  #ca8a04;
+  --severity-error:    #dc2626;
   --severity-critical: #991b1b;
 }
 
-/* Sidebar: severity dot before patient entries */
-/* Applied via Hugo Book's menu template customization */
+// Badge tints (background / foreground) — used by sections 7 and 8.
+$c-ok-bg:      #dcfce7;  $c-ok-fg:      #166534;
+$c-err-bg:     #fee2e2;  $c-err-fg:     #991b1b;
+$c-warn-bg:    #fef3c7;  $c-warn-fg:    #854d0e;
+$c-revoked-bg: #ffedd5;  $c-revoked-fg: #9a3412;
+$c-mute-bg:    #f3f4f6;  $c-mute-fg:    #6b7280;
+$c-empty-fg:   #9ca3af;
+
+// Soft severity backgrounds — used by banners + summary counters + failure.
+$c-info-soft:  #eff4ff;
+$c-warn-soft:  #fefce8;
+$c-err-soft:   #fef2f2;
+
+// Action badge palette.
+$c-action-bg:  #e0e7ff;
+$c-action-fg:  #3730a3;
+
+// Neutral structural colors.
+$c-text-mid:    #4b5563;  // subsection headings, validity rows, UNANSWERED fg
+$c-rule-border: #d1d5db;
+
+// Shared geometry for every inline value badge in section 7.
+// Color is applied per variant; padding is overridable.
+@mixin badge-base($padding-x: 0.45rem) {
+  display: inline-block;
+  padding: 0.1rem $padding-x;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+
+// ── 2. Sidebar ────────────────────────────────────────────────
+
 .severity-dot {
   display: inline-block;
   width: 8px;
@@ -22,7 +69,9 @@
 .severity-dot-error    { background-color: var(--severity-error); }
 .severity-dot-critical { background-color: var(--severity-critical); }
 
-/* Detail page: severity banner */
+
+// ── 3. Severity banners (detail page) ─────────────────────────
+
 .severity-banner {
   padding: 0.75rem 1rem;
   border-radius: 6px;
@@ -35,31 +84,14 @@
   margin-top: -0.5rem;
 }
 
-.severity-banner-info {
-  background: #eff4ff;
-  border-color: var(--severity-info);
-  color: var(--severity-info);
-}
+.severity-banner-info     { background: $c-info-soft; border-color: var(--severity-info);     color: var(--severity-info); }
+.severity-banner-warning  { background: $c-warn-soft; border-color: var(--severity-warning);  color: var(--severity-warning); }
+.severity-banner-error    { background: $c-err-soft;  border-color: var(--severity-error);    color: var(--severity-error); }
+.severity-banner-critical { background: $c-err-soft;  border-color: var(--severity-critical); color: var(--severity-critical); }
 
-.severity-banner-warning {
-  background: #fefce8;
-  border-color: var(--severity-warning);
-  color: var(--severity-warning);
-}
 
-.severity-banner-error {
-  background: #fef2f2;
-  border-color: var(--severity-error);
-  color: var(--severity-error);
-}
+// ── 4. Summary counters ───────────────────────────────────────
 
-.severity-banner-critical {
-  background: #fef2f2;
-  border-color: var(--severity-critical);
-  color: var(--severity-critical);
-}
-
-/* Summary page: severity counter badges */
 .severity-counters {
   display: flex;
   gap: 1rem;
@@ -77,169 +109,172 @@
   font-weight: 600;
 }
 
-.severity-badge-info     { background: #eff4ff; color: var(--severity-info); }
-.severity-badge-warning  { background: #fefce8; color: var(--severity-warning); }
-.severity-badge-error    { background: #fef2f2; color: var(--severity-error); }
-.severity-badge-critical { background: #fef2f2; color: var(--severity-critical); }
+.severity-badge-info     { background: $c-info-soft; color: var(--severity-info); }
+.severity-badge-warning  { background: $c-warn-soft; color: var(--severity-warning); }
+.severity-badge-error    { background: $c-err-soft;  color: var(--severity-error); }
+.severity-badge-critical { background: $c-err-soft;  color: var(--severity-critical); }
 
-/* Report sections (detail page, rendered from front matter) */
+
+// ── 5. Report layout ──────────────────────────────────────────
+
 .report-section {
   margin-top: 1.5rem;
+
+  h2 { margin-bottom: 0.5rem; }
 }
-
-.report-section h2 {
-  margin-bottom: 0.5rem;
-}
-
-/* === Add to existing _custom.scss === */
-
-/* ─── Failure section ──────────────────────────────────────── */
-
-.report-failure {
-  background: #fef2f2;
-  border-left: 3px solid #dc2626;
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-}
-
-.report-failure h2 {
-  color: #991b1b;
-  margin-top: 0;
-}
-
-.failure-reason {
-  font-family: monospace;
-  font-size: 0.9em;
-  color: #4b5563;
-  background: rgba(0, 0, 0, 0.03);
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  margin-top: 0.5rem;
-}
-
-/* ─── Quad-column tables ──────────────────────────────────── */
-
-.report-table-quadcol thead tr:first-child th {
-  text-align: center;
-  border-bottom: 1px solid #d1d5db;
-}
-
-.report-table-quadcol .group-ths {
-  background: rgba(59, 130, 246, 0.06);   /* subtle blue tint */
-}
-
-.report-table-quadcol .group-lims {
-  background: rgba(168, 85, 247, 0.06);   /* subtle purple tint */
-}
-
-.report-table-quadcol .col-ist {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-.report-table-quadcol .col-rule {
-  background: rgba(0, 0, 0, 0.04);
-  font-size: 0.9em;
-  color: #6b7280;
-}
-
-.report-table-quadcol th.col-ist,
-.report-table-quadcol th.col-rule {
-  font-size: 0.8em;
-  font-weight: 500;
-  color: #6b7280;
-}
-
-/* ─── Dual-column table (recency / equality) ────────────────── */
-
-.report-table-dual th.col-ist,
-.report-table-dual th.col-rule {
-  font-size: 0.8em;
-  font-weight: 500;
-  color: #6b7280;
-}
-
-.report-table-dual .col-rule {
-  font-size: 0.9em;
-  color: #6b7280;
-}
-
-/* ─── Subsection layout ────────────────────────────────────── */
-
-.report-subsection h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  color: #4b5563;
-}
-
-/* === Replace existing .report-subsections rule in _custom.scss === */
 
 .report-subsections {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   margin-top: 1.5rem;
+
+  .report-subsection { margin-top: 0; }
 }
 
-.report-subsections .report-subsection {
-  margin-top: 0;
+.report-subsection h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: $c-text-mid;
 }
 
-/* Affirmation indicators */
-.affirmation-yes {
-  display: inline-block;
-  padding: 0.1rem 0.45rem;
+.report-failure {
+  background: $c-err-soft;
+  border-left: 3px solid #dc2626;
+  padding: 0.75rem 1rem;
   border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  background: #dcfce7;
-  color: #166534;
+
+  h2 {
+    color: $c-err-fg;
+    margin-top: 0;
+  }
 }
 
-.affirmation-no {
-  display: inline-block;
-  padding: 0.1rem 0.45rem;
+.failure-reason {
+  font-family: monospace;
+  font-size: 0.9em;
+  color: $c-text-mid;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 0.5rem 0.75rem;
   border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  background: #fee2e2;
-  color: #991b1b;
+  margin-top: 0.5rem;
 }
+
+
+// ── 6. Tables ─────────────────────────────────────────────────
 
 .report-table {
   width: 100%;
   border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid rgba(127, 127, 127, 0.2);
+    text-align: left;
+  }
+
+  tr.row-diff td { background-color: rgba(202, 138, 4, 0.08); }
 }
 
-.report-table th,
-.report-table td {
-  padding: 0.4rem 0.6rem;
-  border-bottom: 1px solid rgba(127, 127, 127, 0.2);
-  text-align: left;
+// Quad-column evaluation table: THS-ist | THS-rule | LIMS-ist | LIMS-rule
+.report-table-quadcol {
+  thead tr:first-child th {
+    text-align: center;
+    border-bottom: 1px solid $c-rule-border;
+  }
+
+  .group-ths  { background: rgba(59, 130, 246, 0.06); }  // subtle blue
+  .group-lims { background: rgba(168, 85, 247, 0.06); }  // subtle purple
+
+  .col-ist  { background: rgba(0, 0, 0, 0.02); }
+  .col-rule {
+    background: rgba(0, 0, 0, 0.04);
+    font-size: 0.9em;
+    color: $c-mute-fg;
+  }
+
+  th.col-ist,
+  th.col-rule {
+    font-size: 0.8em;
+    font-weight: 500;
+    color: $c-mute-fg;
+  }
 }
 
-.report-table tr.row-diff td {
-  background-color: rgba(202, 138, 4, 0.08);
+// Dual-column table (recency / equality)
+.report-table-dual {
+  th.col-ist,
+  th.col-rule {
+    font-size: 0.8em;
+    font-weight: 500;
+    color: $c-mute-fg;
+  }
+
+  .col-rule {
+    font-size: 0.9em;
+    color: $c-mute-fg;
+  }
 }
 
-.module-val {
-  display: inline-block;
-  padding: 0.1rem 0.45rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
+// Consent comparison table: module rows + validity rows separated by tbody
+.report-table-consent {
+  tbody + tbody {
+    border-top: 2px solid rgba(0, 0, 0, 0.05);
+  }
+
+  tbody.validity-group td {
+    font-size: 0.92em;
+    color: $c-text-mid;
+  }
 }
 
-.module-val-GRANTED     { background: #dcfce7; color: #166534; }
-.module-val-DECLINED    { background: #fee2e2; color: #991b1b; }
-.module-val-REVOKED     { background: #ffedd5; color: #9a3412; }
-.module-val-UNANSWERED  { background: #f3f4f6; color: #4b5563; }
-.module-val-UNAVAILABLE { background: #f3f4f6; color: #6b7280; font-style: italic; }
-.module-val-EMPTY { background: transparent; color: #9ca3af; }
+// Summary patient table fills the article width
+.book-article > table { width: 100%; }
 
-.consent-validity {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-}
+
+// ── 7. Badges ─────────────────────────────────────────────────
+
+// Affirmation indicator (yes / no)
+.affirmation-yes { @include badge-base; background: $c-ok-bg;  color: $c-ok-fg; }
+.affirmation-no  { @include badge-base; background: $c-err-bg; color: $c-err-fg; }
+
+// Module decision (per-module THS/LIMS values)
+.module-val { @include badge-base; }
+
+.module-val-GRANTED     { background: $c-ok-bg;      color: $c-ok-fg; }
+.module-val-DECLINED    { background: $c-err-bg;     color: $c-err-fg; }
+.module-val-REVOKED     { background: $c-revoked-bg; color: $c-revoked-fg; }
+.module-val-UNANSWERED  { background: $c-mute-bg;    color: $c-text-mid; }
+.module-val-UNAVAILABLE { background: $c-mute-bg;    color: $c-mute-fg; font-style: italic; }
+.module-val-EMPTY       { background: transparent;   color: $c-empty-fg; }
+
+// Aggregated decision (whole-consent value used in rule eval)
+.aggregated-val { @include badge-base; }
+
+.aggregated-val-AFFIRMED     { background: $c-ok-bg;      color: $c-ok-fg; }
+.aggregated-val-DECLINED     { background: $c-warn-bg;    color: $c-warn-fg; }
+.aggregated-val-REVOKED      { background: $c-revoked-bg; color: $c-revoked-fg; }
+.aggregated-val-INCONSISTENT { background: $c-err-bg;     color: $c-err-fg; }
+.aggregated-val-CONSISTENT   { background: $c-mute-bg;    color: $c-mute-fg; font-style: italic; }
+.aggregated-val-EMPTY        { background: transparent;   color: $c-empty-fg; }
+.aggregated-val-ANY          { background: $c-mute-bg;    color: $c-mute-fg; font-style: italic; }
+
+// timeValidity (rule-side expectation)
+.timevalidity-val { @include badge-base; }
+
+.timevalidity-val-VALID   { background: $c-ok-bg;    color: $c-ok-fg; }
+.timevalidity-val-EXPIRED { background: $c-err-bg;   color: $c-err-fg; }
+.timevalidity-val-NONE    { background: transparent; color: $c-empty-fg; }
+.timevalidity-val-ANY     { background: $c-mute-bg;  color: $c-mute-fg; font-style: italic; }
+
+// Validity (computed valid/expired for a consent's date range)
+.validity-badge   { @include badge-base(0.5rem); white-space: nowrap; }
+.validity-valid   { background: $c-ok-bg;  color: $c-ok-fg; }
+.validity-expired { background: $c-err-bg; color: $c-err-fg; }
+
+
+// ── 8. Actions ────────────────────────────────────────────────
 
 .action-list {
   list-style: none;
@@ -252,87 +287,22 @@
 .action-item {
   padding: 0.25rem 0.7rem;
   border-radius: 4px;
-  background: #e0e7ff;
-  color: #3730a3;
+  background: $c-action-bg;
+  color: $c-action-fg;
   font-size: 0.85rem;
   font-weight: 500;
+
+  &.action-failed {
+    background: $c-err-bg;
+    color: $c-err-fg;
+    text-decoration: line-through;
+  }
 }
 
-.action-item.action-failed {
-  background: #fee2e2;
-  color: #991b1b;
-  text-decoration: line-through;
+
+// ── 9. Misc ───────────────────────────────────────────────────
+
+.consent-validity {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
 }
-
-/* Summary patient table */
-.book-article > table {
-  width: 100%;
-}
-
-/* === Add to existing _custom.scss === */
-
-/* ─── Validity badges (analog to module badges) ────────────── */
-
-.validity-badge {
-  display: inline-block;
-  padding: 0.1rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.validity-valid {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.validity-expired {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-/* ─── Visual separation between module-group and validity-group ── */
-
-.report-table-consent tbody + tbody {
-  /* small extra spacing before the validity rows */
-  border-top: 2px solid rgba(0, 0, 0, 0.05);
-}
-
-.report-table-consent tbody.validity-group td {
-  font-size: 0.92em;
-  color: #4b5563;
-}
-
-/* ─── Aggregated value badges (evaluation table) ───────────── */
-
-.aggregated-val {
-  display: inline-block;
-  padding: 0.1rem 0.45rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.aggregated-val-AFFIRMED     { background: #dcfce7; color: #166534; }
-.aggregated-val-DECLINED     { background: #fef3c7; color: #854d0e; }
-.aggregated-val-REVOKED      { background: #ffedd5; color: #9a3412; }
-.aggregated-val-INCONSISTENT { background: #fee2e2; color: #991b1b; }
-.aggregated-val-CONSISTENT   { background: #f3f4f6; color: #6b7280; font-style: italic; }
-.aggregated-val-EMPTY        { background: transparent; color: #9ca3af; }
-.aggregated-val-ANY          { background: #f3f4f6; color: #6b7280; font-style: italic; }
-
-/* ─── timeValidity badges (evaluation table) ───────────────── */
-
-.timevalidity-val {
-  display: inline-block;
-  padding: 0.1rem 0.45rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.timevalidity-val-VALID    { background: #dcfce7; color: #166534; }
-.timevalidity-val-EXPIRED  { background: #fee2e2; color: #991b1b; }
-.timevalidity-val-NONE     { background: transparent; color: #9ca3af; }
-.timevalidity-val-ANY      { background: #f3f4f6; color: #6b7280; font-style: italic; }
