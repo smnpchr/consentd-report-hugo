@@ -5,11 +5,10 @@
 //   2. Sidebar                severity dots
 //   3. Severity banners       detail-page top banner
 //   4. Summary counters       per-severity badges on daily summary
-//   5. Report layout          sections, subsections, failure block
+//   5. Report layout          sections, subsections
 //   6. Tables                 base, quad-col, dual-col, consent
 //   7. Badges                 module / aggregated / timeValidity / validity / affirmation
 //   8. Actions                rule.actions list
-//   9. Misc
 // ─────────────────────────────────────────────────────────────
 
 
@@ -137,29 +136,6 @@ $c-rule-border: #d1d5db;
   font-size: 1rem;
   color: $c-text-mid;
 }
-
-.report-failure {
-  background: $c-err-soft;
-  border-left: 3px solid #dc2626;
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-
-  h2 {
-    color: $c-err-fg;
-    margin-top: 0;
-  }
-}
-
-.failure-reason {
-  font-family: monospace;
-  font-size: 0.9em;
-  color: $c-text-mid;
-  background: rgba(0, 0, 0, 0.03);
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  margin-top: 0.5rem;
-}
-
 
 // ── 6. Tables ─────────────────────────────────────────────────
 
@@ -303,12 +279,4 @@ table.report-table tr:nth-child(2n) {
     color: $c-err-fg;
     text-decoration: line-through;
   }
-}
-
-
-// ── 9. Misc ───────────────────────────────────────────────────
-
-.consent-validity {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
 }
