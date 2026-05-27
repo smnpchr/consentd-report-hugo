@@ -163,6 +163,14 @@ $c-rule-border: #d1d5db;
 
 // ── 6. Tables ─────────────────────────────────────────────────
 
+// Cancel the theme's markdown-table zebra striping on report tables
+// (themes/hugo-book/assets/_markdown.scss). Per-cell tints carry the
+// visual structure here. `table.report-table` ties the theme's
+// specificity (0,2,2); our rule wins on source order.
+table.report-table tr:nth-child(2n) {
+  background: transparent;
+}
+
 .report-table {
   width: 100%;
   border-collapse: collapse;
