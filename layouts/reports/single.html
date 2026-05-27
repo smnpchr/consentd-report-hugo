@@ -188,8 +188,7 @@
           {{ range $m := $modules }}
           {{ $thsVal := index $ths $m }}
           {{ $limsVal := index $lims $m }}
-          {{ $diff := and (ne $thsVal nil) (ne $limsVal nil) (ne $thsVal $limsVal) }}
-          <tr{{ if $diff }} class="row-diff"{{ end }}>
+          <tr>
             <td>{{ i18n (printf "module_%s" $m) }}</td>
             <td>
               {{- if $ths -}}
