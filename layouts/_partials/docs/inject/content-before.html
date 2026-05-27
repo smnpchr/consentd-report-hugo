@@ -5,6 +5,7 @@
   {{- else if eq . "error" }}&#x274C; {{ i18n "severity_error" }}
   {{- else if eq . "critical" }}&#x1F6A8; {{ i18n "severity_critical" }}
   {{- end -}}
+  {{- with $.Params.rule.name }} &mdash; {{ . }}{{ end -}}
 </div>
 {{- end -}}
 

@@ -2,16 +2,7 @@
   {{- $p := .Params -}}
   <article class="markdown book-article">
     {{- .Content -}}
-
-    {{/* Rule section */}}
-    {{ with $p.rule }}
-    <section class="report-section report-rule">
-      <h2>{{ i18n "heading_rule" }}</h2>
-      <p>
-        {{ .description }} &mdash; <strong> {{ .name }} </strong>
-      </p>
-    </section>
-    {{ end }}
+    {{ with $p.rule.description }}<h2>{{ . }}</h2>{{ end }}
 
     {{/* Evaluation section */}}
     {{ with $p.evaluation }}
