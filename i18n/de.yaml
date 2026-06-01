@@ -1,4 +1,5 @@
 # Severity labels
+severity_success: "Erfolg"
 severity_info: "Info"
 severity_warning: "Warnung"
 severity_error: "Fehler"

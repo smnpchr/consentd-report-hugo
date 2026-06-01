@@ -5,6 +5,7 @@
     {{ if .Params.patientCount }}
     {{/* Daily summary page — show severity badges and patient list */}}
     <div class="severity-counters">
+      {{ with .Params.severitySuccess }}<span class="severity-badge severity-badge-success">{{ i18n "severity_success" }}: {{ . }}</span>{{ end }}
       {{ with .Params.severityInfo }}<span class="severity-badge severity-badge-info">{{ i18n "severity_info" }}: {{ . }}</span>{{ end }}
       {{ with .Params.severityWarning }}<span class="severity-badge severity-badge-warning">{{ i18n "severity_warning" }}: {{ . }}</span>{{ end }}
       {{ with .Params.severityError }}<span class="severity-badge severity-badge-error">{{ i18n "severity_error" }}: {{ . }}</span>{{ end }}

@@ -15,6 +15,7 @@
 // ── 1. Tokens ─────────────────────────────────────────────────
 
 :root {
+  --severity-success:  #16a34a;
   --severity-info:     #2563eb;
   --severity-warning:  #ca8a04;
   --severity-error:    #dc2626;
@@ -30,9 +31,10 @@ $c-mute-bg:    #f3f4f6;  $c-mute-fg:    #6b7280;
 $c-empty-fg:   #9ca3af;
 
 // Soft severity backgrounds — used by banners + summary counters + failure.
-$c-info-soft:  #eff4ff;
-$c-warn-soft:  #fefce8;
-$c-err-soft:   #fef2f2;
+$c-success-soft: #f0fdf4;
+$c-info-soft:    #eff4ff;
+$c-warn-soft:    #fefce8;
+$c-err-soft:     #fef2f2;
 
 // Action badge palette.
 $c-action-bg:  #e0e7ff;
@@ -63,6 +65,7 @@ $c-rule-border: #d1d5db;
   margin-right: 6px;
 }
 
+.severity-dot-success  { background-color: var(--severity-success); }
 .severity-dot-info     { background-color: var(--severity-info); }
 .severity-dot-warning  { background-color: var(--severity-warning); }
 .severity-dot-error    { background-color: var(--severity-error); }
@@ -83,10 +86,11 @@ $c-rule-border: #d1d5db;
   margin-top: -0.5rem;
 }
 
-.severity-banner-info     { background: $c-info-soft; border-color: var(--severity-info);     color: var(--severity-info); }
-.severity-banner-warning  { background: $c-warn-soft; border-color: var(--severity-warning);  color: var(--severity-warning); }
-.severity-banner-error    { background: $c-err-soft;  border-color: var(--severity-error);    color: var(--severity-error); }
-.severity-banner-critical { background: $c-err-soft;  border-color: var(--severity-critical); color: var(--severity-critical); }
+.severity-banner-success  { background: $c-success-soft; border-color: var(--severity-success);  color: var(--severity-success); }
+.severity-banner-info     { background: $c-info-soft;    border-color: var(--severity-info);     color: var(--severity-info); }
+.severity-banner-warning  { background: $c-warn-soft;    border-color: var(--severity-warning);  color: var(--severity-warning); }
+.severity-banner-error    { background: $c-err-soft;     border-color: var(--severity-error);    color: var(--severity-error); }
+.severity-banner-critical { background: $c-err-soft;     border-color: var(--severity-critical); color: var(--severity-critical); }
 
 
 // ── 4. Summary counters ───────────────────────────────────────
@@ -108,10 +112,11 @@ $c-rule-border: #d1d5db;
   font-weight: 600;
 }
 
-.severity-badge-info     { background: $c-info-soft; color: var(--severity-info); }
-.severity-badge-warning  { background: $c-warn-soft; color: var(--severity-warning); }
-.severity-badge-error    { background: $c-err-soft;  color: var(--severity-error); }
-.severity-badge-critical { background: $c-err-soft;  color: var(--severity-critical); }
+.severity-badge-success  { background: $c-success-soft; color: var(--severity-success); }
+.severity-badge-info     { background: $c-info-soft;    color: var(--severity-info); }
+.severity-badge-warning  { background: $c-warn-soft;    color: var(--severity-warning); }
+.severity-badge-error    { background: $c-err-soft;     color: var(--severity-error); }
+.severity-badge-critical { background: $c-err-soft;     color: var(--severity-critical); }
 
 
 // ── 5. Report layout ──────────────────────────────────────────

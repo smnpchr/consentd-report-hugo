@@ -1,6 +1,7 @@
 {{- with .Params.severity -}}
 <div class="severity-banner severity-banner-{{ . }}">
-  {{- if eq . "info" }}&#x2139;&#xFE0F; {{ i18n "severity_info" }}
+  {{- if eq . "success" }}&#x2705; {{ i18n "severity_success" }}
+  {{- else if eq . "info" }}&#x2139;&#xFE0F; {{ i18n "severity_info" }}
   {{- else if eq . "warning" }}&#x26A0;&#xFE0F; {{ i18n "severity_warning" }}
   {{- else if eq . "error" }}&#x274C; {{ i18n "severity_error" }}
   {{- else if eq . "critical" }}&#x1F6A8; {{ i18n "severity_critical" }}

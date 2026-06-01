@@ -140,7 +140,8 @@ Body: minimal — typically `# {patientId}`.
 
 | Severity | CSS class | Color | Meaning |
 |----------|-----------|-------|---------|
-| info | `.severity-info` | Blue | Normal import, as expected |
+| success | `.severity-success` | Green | Action executed successfully (e.g. consent imported) |
+| info | `.severity-info` | Blue | Informational only, no action required |
 | warning | `.severity-warning` | Orange | Anomaly reported |
 | error | `.severity-error` | Red | Data problem (e.g. inconsistent THS) |
 | critical | `.severity-critical` | Dark red | Action failed (e.g. LIMS unreachable) |
@@ -165,6 +166,7 @@ Body: minimal — typically `# {patientId}`.
 ### CSS Variables (to be defined in custom CSS)
 ```css
 :root {
+  --severity-success: #16a34a;
   --severity-info: #2563eb;
   --severity-warning: #ca8a04;
   --severity-error: #dc2626;
