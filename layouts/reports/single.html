@@ -1,5 +1,12 @@
 {{ define "main" }}
   {{- $p := .Params -}}
+
+  {{/* Column labels: prefer the sync's instance names, fall back to generic source/target */}}
+  {{ $sourceLabel := i18n "label_source" }}
+  {{ with $p.sourceName }}{{ $sourceLabel = i18n (printf "instance_%s" .) }}{{ end }}
+  {{ $targetLabel := i18n "label_target" }}
+  {{ with $p.targetName }}{{ $targetLabel = i18n (printf "instance_%s" .) }}{{ end }}
+
   <article class="markdown book-article">
     {{- .Content -}}
     {{ with $p.rule.description }}<h2>{{ . }}</h2>{{ end }}
@@ -9,10 +16,10 @@
     <section id="section-evaluation" class="report-section report-evaluation">
       <h2>{{ i18n "heading_evaluation" }}</h2>
 
-      {{ $thsEval := .thsEvaluation }}
-      {{ $limsEval := .limsEvaluation }}
-      {{ $thsRule := $p.rule.ths }}
-      {{ $limsRule := $p.rule.lims }}
+      {{ $sourceEval := .sourceEvaluation }}
+      {{ $targetEval := .targetEvaluation }}
+      {{ $sourceRule := $p.rule.source }}
+      {{ $targetRule := $p.rule.target }}
 
       {{/* === Recency + Equality === */}}
       <h3>{{ i18n "heading_eval_generic" }}</h3>
@@ -44,8 +51,8 @@
         <thead>
           <tr>
             <th rowspan="2">{{ i18n "label_dimension" }}</th>
-            <th colspan="2" class="group-ths">{{ i18n "label_ths" }}</th>
-            <th colspan="2" class="group-lims">{{ i18n "label_lims" }}</th>
+            <th colspan="2" class="group-source">{{ $sourceLabel }}</th>
+            <th colspan="2" class="group-target">{{ $targetLabel }}</th>
           </tr>
           <tr>
             <th class="col-ist">{{ i18n "label_result" }}</th>
@@ -57,39 +64,39 @@
         <tbody>
           <tr>
             <td>{{ i18n "label_aggregated" }}</td>
-            <td class="col-ist">{{ partial "report-aggregated-cell" ($thsEval.aggregated | default "EMPTY") }}</td>
-            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $thsRule.aggregated "prefix" "aggregated_" "cssPrefix" "aggregated-val") }}</td>
-            <td class="col-ist">{{ partial "report-aggregated-cell" ($limsEval.aggregated | default "EMPTY") }}</td>
-            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $limsRule.aggregated "prefix" "aggregated_" "cssPrefix" "aggregated-val") }}</td>
+            <td class="col-ist">{{ partial "report-aggregated-cell" ($sourceEval.aggregated | default "EMPTY") }}</td>
+            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $sourceRule.aggregated "prefix" "aggregated_" "cssPrefix" "aggregated-val") }}</td>
+            <td class="col-ist">{{ partial "report-aggregated-cell" ($targetEval.aggregated | default "EMPTY") }}</td>
+            <td class="col-rule">{{ partial "report-list-i18n" (dict "list" $targetRule.aggregated "prefix" "aggregated_" "cssPrefix" "aggregated-val") }}</td>
           </tr>
           <tr>
             <td>{{ i18n "label_validity" }}</td>
-            <td class="col-ist">{{ partial "report-timevalidity-cell" ($thsEval.timeValidity | default "NONE") }}</td>
-            <td class="col-rule">{{ partial "report-timevalidity-cell" ($thsRule.timeValidity | default "ANY") }}</td>
-            <td class="col-ist">{{ partial "report-timevalidity-cell" ($limsEval.timeValidity | default "NONE") }}</td>
-            <td class="col-rule">{{ partial "report-timevalidity-cell" ($limsRule.timeValidity | default "ANY") }}</td>
+            <td class="col-ist">{{ partial "report-timevalidity-cell" ($sourceEval.timeValidity | default "NONE") }}</td>
+            <td class="col-rule">{{ partial "report-timevalidity-cell" ($sourceRule.timeValidity | default "ANY") }}</td>
+            <td class="col-ist">{{ partial "report-timevalidity-cell" ($targetEval.timeValidity | default "NONE") }}</td>
+            <td class="col-rule">{{ partial "report-timevalidity-cell" ($targetRule.timeValidity | default "ANY") }}</td>
           </tr>
         </tbody>
       </table>
 
       {{/* === Sub-sections: shown only when rule specifies them === */}}
-      {{ $thsRuleAff := $thsRule.affirmed }}
-      {{ $limsRuleAff := $limsRule.affirmed }}
-      {{ $thsRuleCon := $thsRule.content }}
-      {{ $limsRuleCon := $limsRule.content }}
-      {{ if or $thsRuleAff $limsRuleAff $thsRuleCon $limsRuleCon }}
+      {{ $sourceRuleAff := $sourceRule.affirmed }}
+      {{ $targetRuleAff := $targetRule.affirmed }}
+      {{ $sourceRuleCon := $sourceRule.content }}
+      {{ $targetRuleCon := $targetRule.content }}
+      {{ if or $sourceRuleAff $targetRuleAff $sourceRuleCon $targetRuleCon }}
       <div class="report-subsections">
 
         {{/* Affirmations sub-section — only if rule defines them */}}
-        {{ if or $thsRuleAff $limsRuleAff }}
+        {{ if or $sourceRuleAff $targetRuleAff }}
         <div class="report-subsection">
           <h3>{{ i18n "heading_affirmations" }}</h3>
           <table class="report-table report-table-quadcol">
             <thead>
               <tr>
                 <th rowspan="2">{{ i18n "label_module" }}</th>
-                <th colspan="2" class="group-ths">{{ i18n "label_ths" }}</th>
-                <th colspan="2" class="group-lims">{{ i18n "label_lims" }}</th>
+                <th colspan="2" class="group-source">{{ $sourceLabel }}</th>
+                <th colspan="2" class="group-target">{{ $targetLabel }}</th>
               </tr>
               <tr>
                 <th class="col-ist">{{ i18n "label_result" }}</th>
@@ -100,15 +107,15 @@
             </thead>
             <tbody>
               {{ $modules := slice "ACQUIRE_USE_STOCK" "ADDITIONAL_ACQUISITION" "RETROSPECTIVE_USAGE" "NON_EU_TRANSFER" }}
-              {{ $thsAff := $thsEval.affirmations }}
-              {{ $limsAff := $limsEval.affirmations }}
+              {{ $sourceAff := $sourceEval.affirmations }}
+              {{ $targetAff := $targetEval.affirmations }}
               {{ range $m := $modules }}
               <tr>
                 <td>{{ i18n (printf "module_%s" $m) }}</td>
-                <td class="col-ist">{{ partial "report-bool-cell" (index $thsAff $m) }}</td>
-                <td class="col-rule">{{ partial "report-bool-cell" (index $thsRuleAff $m) }}</td>
-                <td class="col-ist">{{ partial "report-bool-cell" (index $limsAff $m) }}</td>
-                <td class="col-rule">{{ partial "report-bool-cell" (index $limsRuleAff $m) }}</td>
+                <td class="col-ist">{{ partial "report-bool-cell" (index $sourceAff $m) }}</td>
+                <td class="col-rule">{{ partial "report-bool-cell" (index $sourceRuleAff $m) }}</td>
+                <td class="col-ist">{{ partial "report-bool-cell" (index $targetAff $m) }}</td>
+                <td class="col-rule">{{ partial "report-bool-cell" (index $targetRuleAff $m) }}</td>
               </tr>
               {{ end }}
             </tbody>
@@ -117,15 +124,15 @@
         {{ end }}
 
         {{/* Content sub-section — only if rule defines it */}}
-        {{ if or $thsRuleCon $limsRuleCon }}
+        {{ if or $sourceRuleCon $targetRuleCon }}
         <div class="report-subsection">
           <h3>{{ i18n "heading_content" }}</h3>
           <table class="report-table report-table-quadcol">
             <thead>
               <tr>
                 <th rowspan="2">{{ i18n "label_module" }}</th>
-                <th colspan="2" class="group-ths">{{ i18n "label_ths" }}</th>
-                <th colspan="2" class="group-lims">{{ i18n "label_lims" }}</th>
+                <th colspan="2" class="group-source">{{ $sourceLabel }}</th>
+                <th colspan="2" class="group-target">{{ $targetLabel }}</th>
               </tr>
               <tr>
                 <th class="col-ist">{{ i18n "label_result" }}</th>
@@ -136,15 +143,15 @@
             </thead>
             <tbody>
               {{ $modules := slice "ACQUIRE_USE_STOCK" "ADDITIONAL_ACQUISITION" "RETROSPECTIVE_USAGE" "NON_EU_TRANSFER" }}
-              {{ $thsCon := $thsEval.content }}
-              {{ $limsCon := $limsEval.content }}
+              {{ $sourceCon := $sourceEval.content }}
+              {{ $targetCon := $targetEval.content }}
               {{ range $m := $modules }}
               <tr>
                 <td>{{ i18n (printf "module_%s" $m) }}</td>
-                <td class="col-ist">{{ partial "report-module-cell" (index $thsCon $m) }}</td>
-                <td class="col-rule">{{ partial "report-module-cell" (index $thsRuleCon $m) }}</td>
-                <td class="col-ist">{{ partial "report-module-cell" (index $limsCon $m) }}</td>
-                <td class="col-rule">{{ partial "report-module-cell" (index $limsRuleCon $m) }}</td>
+                <td class="col-ist">{{ partial "report-module-cell" (index $sourceCon $m) }}</td>
+                <td class="col-rule">{{ partial "report-module-cell" (index $sourceRuleCon $m) }}</td>
+                <td class="col-ist">{{ partial "report-module-cell" (index $targetCon $m) }}</td>
+                <td class="col-rule">{{ partial "report-module-cell" (index $targetRuleCon $m) }}</td>
               </tr>
               {{ end }}
             </tbody>
@@ -166,29 +173,29 @@
         <thead>
           <tr>
             <th>{{ i18n "label_property" }}</th>
-            <th>{{ i18n "label_ths" }}</th>
-            <th>{{ i18n "label_lims" }}</th>
+            <th>{{ $sourceLabel }}</th>
+            <th>{{ $targetLabel }}</th>
           </tr>
         </thead>
 
         {{/* === Module rows === */}}
         <tbody class="module-group">
           {{ $modules := slice "acquireUseStock" "additionalAcquisition" "retrospectiveUsage" "nonEuTransfer" }}
-          {{ $ths := .ths }}
-          {{ $lims := .lims }}
+          {{ $source := .source }}
+          {{ $target := .target }}
           {{ range $m := $modules }}
-          {{ $thsVal := index $ths $m }}
-          {{ $limsVal := index $lims $m }}
+          {{ $sourceVal := index $source $m }}
+          {{ $targetVal := index $target $m }}
           <tr>
             <td>{{ i18n (printf "module_%s" $m) }}</td>
             <td>
-              {{- if $ths -}}
-                <span class="module-val module-val-{{ $thsVal | default "EMPTY" }}">{{ i18n (printf "module_%s" ($thsVal | default "EMPTY")) }}</span>
+              {{- if $source -}}
+                <span class="module-val module-val-{{ $sourceVal | default "EMPTY" }}">{{ i18n (printf "module_%s" ($sourceVal | default "EMPTY")) }}</span>
               {{- else }}&mdash;{{ end -}}
             </td>
             <td>
-              {{- if $lims -}}
-                <span class="module-val module-val-{{ $limsVal | default "EMPTY" }}">{{ i18n (printf "module_%s" ($limsVal | default "EMPTY")) }}</span>
+              {{- if $target -}}
+                <span class="module-val module-val-{{ $targetVal | default "EMPTY" }}">{{ i18n (printf "module_%s" ($targetVal | default "EMPTY")) }}</span>
               {{- else }}&mdash;{{ end -}}
             </td>
           </tr>
@@ -196,22 +203,22 @@
         </tbody>
 
         {{/* === Validity rows === */}}
-        {{ if or $ths $lims }}
+        {{ if or $source $target }}
         <tbody class="validity-group">
           <tr>
             <td>{{ i18n "label_valid_from" }}</td>
-            <td>{{ with $ths }}{{ .validFrom | default "—" }}{{ else }}&mdash;{{ end }}</td>
-            <td>{{ with $lims }}{{ .validFrom | default "—" }}{{ else }}&mdash;{{ end }}</td>
+            <td>{{ with $source }}{{ .validFrom | default "—" }}{{ else }}&mdash;{{ end }}</td>
+            <td>{{ with $target }}{{ .validFrom | default "—" }}{{ else }}&mdash;{{ end }}</td>
           </tr>
           <tr>
             <td>{{ i18n "label_valid_until" }}</td>
-            <td>{{ with $ths }}{{ .validUntil | default "—" }}{{ else }}&mdash;{{ end }}</td>
-            <td>{{ with $lims }}{{ .validUntil | default "—" }}{{ else }}&mdash;{{ end }}</td>
+            <td>{{ with $source }}{{ .validUntil | default "—" }}{{ else }}&mdash;{{ end }}</td>
+            <td>{{ with $target }}{{ .validUntil | default "—" }}{{ else }}&mdash;{{ end }}</td>
           </tr>
           <tr>
             <td>{{ i18n "label_validity_status" }}</td>
-            <td>{{ partial "report-validity-cell" $ths }}</td>
-            <td>{{ partial "report-validity-cell" $lims }}</td>
+            <td>{{ partial "report-validity-cell" $source }}</td>
+            <td>{{ partial "report-validity-cell" $target }}</td>
           </tr>
         </tbody>
         {{ end }}

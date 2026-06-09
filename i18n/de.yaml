@@ -24,8 +24,8 @@ heading_content: "Modul-Status-Auswertung"
 
 # Detail page table labels
 label_dimension: "Dimension"
-label_ths: "THS"
-label_lims: "LIMS"
+label_source: "Quelle"        # generic fallback header when no origin is known
+label_target: "Ziel"          # generic fallback header when no origin is known
 label_module: "Modul"
 label_aggregated: "Aggregiert"
 label_validity: "Gültigkeit"
@@ -38,7 +38,12 @@ label_valid: "gültig"
 label_validity_status: "Status"
 label_property: "Eigenschaft"
 
-# Module names (camelCase — used by consent.ths / consent.lims POJO fields)
+# Instance / origin names (InstanceName enum — keyed by enum NAME)
+instance_THS: "THS"
+instance_CXX_PROD: "CentraXX"
+instance_CXX_TEST: "CentraXX (Testsystem)"
+
+# Module names (camelCase — used by consent.source / consent.target POJO fields)
 module_acquireUseStock: "Gewinnung/Lagerung/Nutzung"
 module_additionalAcquisition: "Zusatzentnahme"
 module_retrospectiveUsage: "Retrospektive Nutzung"
@@ -76,8 +81,8 @@ module_EMPTY: "—"
 # Recency / equality
 recency_ANY: "beliebig"
 recency_NONE: "—"
-recency_THS: "THS aktueller"
-recency_LIMS: "LIMS aktueller"
+recency_SOURCE: "Quelle aktueller"
+recency_TARGET: "Ziel aktueller"
 recency_EQUAL: "Gleich aktuell"
 
 equality_ANY: "beliebig"
@@ -100,4 +105,3 @@ summary_severity: "Severity"
 
 label_result: "Ergebnis"
 label_rule: "Regel"
- 

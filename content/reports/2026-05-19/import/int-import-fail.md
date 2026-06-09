@@ -2,14 +2,16 @@
 title: "INT-IMPORT-FAIL"
 date: 2026-05-19T18:30:05+02:00
 severity: critical
+sourceName: THS
+targetName: CXX_PROD
 rule:
   name: NEW_AFFIRMED_THS
   stage: IMPORT
-  ths:
+  source:
     timeValidity: VALID
     aggregated:
     - AFFIRMED
-  lims:
+  target:
     timeValidity: ANY
     aggregated:
     - EMPTY
@@ -24,12 +26,12 @@ rule:
     actions:
     - REPORT
   stopEvaluation: false
-  description: "Neuer bestätigter THS-Consent, LIMS leer"
+  description: "Neuer bestätigter Quell-Consent, Ziel leer"
 failureInfo:
   failureAction: IMPORT
-  failureReason: "de.acme.common.exceptions.FailedImportException: LIMS REST API returned 503: Service Unavailable"
+  failureReason: "de.acme.common.exceptions.FailedImportException: Ziel-REST-API antwortete 503: Service Unavailable"
 evaluation:
-  thsEvaluation:
+  sourceEvaluation:
     timeValidity: VALID
     aggregated: AFFIRMED
     affirmations:
@@ -42,14 +44,15 @@ evaluation:
       ADDITIONAL_ACQUISITION: GRANTED
       RETROSPECTIVE_USAGE: GRANTED
       NON_EU_TRANSFER: GRANTED
-  limsEvaluation:
+  targetEvaluation:
     timeValidity: NONE
     aggregated: EMPTY
   recency: ANY
   equality: ANY
 consent:
-  ths:
+  source:
     patientId: INT-IMPORT-FAIL
+    origin: THS
     validFrom: 2026-04-19
     validUntil: 2027-05-19
     acquireUseStock: GRANTED

@@ -1,19 +1,31 @@
 ---
-title: "INT-UPDATE"
-date: 2026-05-19T18:30:04+02:00
+title: "INT-CONTENT-MISMATCH"
+date: 2026-05-19T18:30:07+02:00
 severity: warning
+sourceName: THS
+targetName: CXX_PROD
 rule:
-  name: UPDATED_AFFIRMED_THS
+  name: CONTENT_DRIFT_LIMS
   stage: OPERATIONAL
-  ths:
+  source:
     timeValidity: VALID
     aggregated:
     - AFFIRMED
-  lims:
+    content:
+      ACQUIRE_USE_STOCK: GRANTED
+      ADDITIONAL_ACQUISITION: GRANTED
+      RETROSPECTIVE_USAGE: GRANTED
+      NON_EU_TRANSFER: DECLINED
+  target:
     timeValidity: VALID
     aggregated:
     - AFFIRMED
-  recency: THS
+    content:
+      ACQUIRE_USE_STOCK: GRANTED
+      ADDITIONAL_ACQUISITION: GRANTED
+      RETROSPECTIVE_USAGE: GRANTED
+      NON_EU_TRANSFER: DECLINED
+  recency: SOURCE
   equality: NOT_EQUAL
   severity: WARNING
   actions:
@@ -24,9 +36,9 @@ rule:
     actions:
     - REPORT
   stopEvaluation: false
-  description: "Aktualisierter bestätigter Consent, LIMS veraltet"
+  description: "Modul-Drift zwischen Quelle und Ziel bei sonst gleicher Affirmation"
 evaluation:
-  thsEvaluation:
+  sourceEvaluation:
     timeValidity: VALID
     aggregated: AFFIRMED
     affirmations:
@@ -39,40 +51,42 @@ evaluation:
       ADDITIONAL_ACQUISITION: GRANTED
       RETROSPECTIVE_USAGE: GRANTED
       NON_EU_TRANSFER: DECLINED
-  limsEvaluation:
+  targetEvaluation:
     timeValidity: VALID
     aggregated: AFFIRMED
     affirmations:
       ACQUIRE_USE_STOCK: true
-      ADDITIONAL_ACQUISITION: false
+      ADDITIONAL_ACQUISITION: true
       RETROSPECTIVE_USAGE: true
       NON_EU_TRANSFER: false
     content:
       ACQUIRE_USE_STOCK: GRANTED
-      ADDITIONAL_ACQUISITION: DECLINED
-      RETROSPECTIVE_USAGE: GRANTED
+      ADDITIONAL_ACQUISITION: GRANTED
+      RETROSPECTIVE_USAGE: REVOKED
       NON_EU_TRANSFER: DECLINED
-  recency: THS
+  recency: SOURCE
   equality: NOT_EQUAL
 consent:
-  ths:
-    patientId: INT-UPDATE
-    validFrom: 2026-03-01
-    validUntil: 2027-03-01
+  source:
+    patientId: INT-CONTENT-MISMATCH
+    origin: THS
+    validFrom: 2026-04-01
+    validUntil: 2027-04-01
     acquireUseStock: GRANTED
     additionalAcquisition: GRANTED
     retrospectiveUsage: GRANTED
     nonEuTransfer: DECLINED
     expired: false
-  lims:
-    patientId: INT-UPDATE
-    validFrom: 2025-08-01
-    validUntil: 2026-08-01
+  target:
+    patientId: INT-CONTENT-MISMATCH
+    origin: CXX_PROD
+    validFrom: 2025-10-15
+    validUntil: 2026-10-15
     acquireUseStock: GRANTED
-    additionalAcquisition: DECLINED
-    retrospectiveUsage: GRANTED
+    additionalAcquisition: GRANTED
+    retrospectiveUsage: REVOKED
     nonEuTransfer: DECLINED
     expired: false
 ---
 
-# INT-UPDATE
+# INT-CONTENT-MISMATCH

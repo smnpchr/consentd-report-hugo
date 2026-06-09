@@ -2,19 +2,21 @@
 title: "INT-DECLINED"
 date: 2026-05-19T18:30:02+02:00
 severity: warning
+sourceName: THS
+targetName: CXX_PROD
 rule:
   name: DECLINED_THS_EXISTING_LIMS
   stage: OPERATIONAL
-  ths:
+  source:
     timeValidity: VALID
     aggregated:
     - DECLINED
     - REVOKED
-  lims:
+  target:
     timeValidity: ANY
     aggregated:
     - AFFIRMED
-  recency: THS
+  recency: SOURCE
   equality: ANY
   severity: WARNING
   actions:
@@ -25,9 +27,9 @@ rule:
     actions:
     - REPORT
   stopEvaluation: false
-  description: "Abgelehnter THS-Consent, LIMS hat bestehenden Import"
+  description: "Abgelehnter Quell-Consent, Ziel hat bestehenden Import"
 evaluation:
-  thsEvaluation:
+  sourceEvaluation:
     timeValidity: VALID
     aggregated: DECLINED
     affirmations:
@@ -40,7 +42,7 @@ evaluation:
       ADDITIONAL_ACQUISITION: DECLINED
       RETROSPECTIVE_USAGE: DECLINED
       NON_EU_TRANSFER: DECLINED
-  limsEvaluation:
+  targetEvaluation:
     timeValidity: VALID
     aggregated: AFFIRMED
     affirmations:
@@ -53,11 +55,12 @@ evaluation:
       ADDITIONAL_ACQUISITION: GRANTED
       RETROSPECTIVE_USAGE: GRANTED
       NON_EU_TRANSFER: GRANTED
-  recency: THS
+  recency: SOURCE
   equality: NOT_EQUAL
 consent:
-  ths:
+  source:
     patientId: INT-DECLINED
+    origin: THS
     validFrom: 2026-05-10
     validUntil: 2027-05-10
     acquireUseStock: DECLINED
@@ -65,8 +68,9 @@ consent:
     retrospectiveUsage: DECLINED
     nonEuTransfer: DECLINED
     expired: false
-  lims:
+  target:
     patientId: INT-DECLINED
+    origin: CXX_PROD
     validFrom: 2025-09-01
     validUntil: 2026-09-01
     acquireUseStock: GRANTED

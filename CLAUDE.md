@@ -62,25 +62,41 @@ into `content/reports/` as Markdown files with minimal front matter.
 
 ## Content Structure
 
+Three section levels under `content/reports/`: **sync run → evaluation
+stage → patient detail**. Each sync run is its own top-level section
+(named by `sync.title()` — a date, a week label); stages (`import`,
+`operational`, `compare`) are the leaf summaries that directly hold the
+patient comparisons.
+
 ```
 content/
 ├── _index.md                          # Landing page
 └── reports/
-    ├── _index.md                      # Reports overview
-    ├── 2026-05-19/                    # One sync run per day
-    │   ├── _index.md                  # Daily summary
-    │   ├── int-affirmed.md            # Patient detail
-    │   ├── int-declined.md
-    │   └── int-import-fail.md
-    └── 2026-05-20/
+    ├── _index.md                      # Reports overview (lists sync runs)
+    ├── 2026-05-19/                    # Sync run — "Daily report" (titled by date)
+    │   ├── _index.md                  # Sync-run index (structural node)
+    │   ├── import/                    # Evaluation stage
+    │   │   ├── _index.md              # Stage index (bookIcon + severity counters)
+    │   │   ├── int-affirmed.md        # Patient detail
+    │   │   └── int-import-fail.md
+    │   └── operational/
+    │       ├── _index.md
+    │       ├── int-declined.md
+    │       └── int-update.md
+    └── 2026-week-21/                  # Sync run — "Woche 21 Report"
         ├── _index.md
-        └── ...
+        └── compare/                   # COMPARE stage
+            ├── _index.md
+            ├── int-compare-equal.md
+            └── int-compare-drift.md
 ```
 
 ### Sidebar Behavior
 
-- Each date folder is a collapsible chapter in the sidebar
-- Patient entries appear as child items when expanded
+- Each sync run is a collapsible chapter; each stage a collapsible
+  sub-chapter carrying its `bookIcon` (`import` / `operational` /
+  `compare`, served from `assets/icons/`)
+- Patient entries appear as child items under their stage when expanded
 - Patient entries are color-coded by severity via CSS class
 - Clicking a patient shows the full evaluation detail
 
@@ -92,11 +108,18 @@ comparison, rule spec, and actions entirely from `.Params`. See
 `docs/front-matter-convention.md` for the full schema and enum values.
 
 Field names are camelCase (matching the Java record components in
-`HugoBookGenerator`). Enum values are emitted as their Java form
-(`AFFIRMED`, `INCONSISTENT`, `GRANTED`, etc.); human-readable labels
-live in `i18n/de.yaml`.
+`HugoBookGenerator`). The side-by-side comparison is direction-neutral:
+front matter speaks of `source` / `target`, not `ths` / `lims`. THS,
+CentraXX etc. survive only as concrete `InstanceName` values
+(`sourceName`, `targetName`, `consent.*.origin`) and inside rule
+*identifiers* (`NEW_AFFIRMED_THS`) — those are not "corrected". Enum
+values are emitted as their Java form (`AFFIRMED`, `INCONSISTENT`,
+`GRANTED`, etc.); human-readable labels live in `i18n/de.yaml`.
 
-### Daily Summary (`_index.md` in date folder)
+### Sync-Run Index (`_index.md` in sync-run folder)
+
+Structural node, written once per sync run. No aggregates — those live on
+the stage indexes below.
 
 ```yaml
 ---
@@ -104,6 +127,22 @@ title: "19.05.2026"
 date: 2026-05-19T18:30:00+02:00
 weight: 20260519
 bookCollapseSection: true
+---
+```
+
+### Stage Index (`_index.md` in stage folder)
+
+Written once per stage. Carries the `bookIcon` and the severity
+aggregates; this is also the leaf summary that renders the patient table.
+No `title` — Hugo derives `.Title` from the folder name (`import` →
+"Import").
+
+```yaml
+---
+date: 2026-05-19T18:30:00+02:00
+weight: 20260519
+bookCollapseSection: true
+bookIcon: import
 patientCount: 5
 severityInfo: 2
 severityWarning: 2
@@ -114,25 +153,29 @@ severityCritical: 0
 
 | Field | Used by |
 |-------|---------|
-| `title` | Sidebar, page title |
+| `title` | (sync-run only) sidebar, page title |
 | `date` | Hugo sort order |
 | `weight` | Sidebar ordering (newest first) |
 | `bookCollapseSection` | Hugo Book collapsible sidebar section |
-| `patientCount` | Summary page heading, reports overview |
-| `severityInfo`, `severityWarning`, `severityError`, `severityCritical` | Counter badges on summary page |
+| `bookIcon` | (stage only) stage icon via `docs/icon` partial |
+| `patientCount` | (stage only) summary page heading, reports overview |
+| `severityInfo`, `severityWarning`, `severityError`, `severityCritical` | (stage only) counter badges on summary page |
 
-Body: minimal — typically `# {title}`.
+Body: minimal — typically `# {title}` (sync run) or empty (stage).
 
 ### Patient Detail (leaf page)
 
 The leaf page front matter is a 1:1 Jackson serialization of the Java
 domain records — `rule` (DecisionRule), `evaluation` (RuleEvaluation),
-`consent` (THS + LIMS BioBankConsent), optional `failureInfo`. Top-level
-`severity` drives the banner; the nested objects feed the detail tables.
+`consent` (source + target BioBankConsent), optional `failureInfo`.
+Top-level `severity` drives the banner; `sourceName` / `targetName` name
+the sync endpoints (drive the comparison column headers); the nested
+objects feed the detail tables.
 
 See `docs/front-matter-convention.md` for the canonical schema, field
 tables, and the full enum value lists. Example fixtures live in
-`content/reports/2026-05-19/`.
+`content/reports/2026-05-19/` (IMPORT + OPERATIONAL) and
+`content/reports/2026-week-21/` (COMPARE).
 
 Body: minimal — typically `# {patientId}`.
 
@@ -149,15 +192,16 @@ Body: minimal — typically `# {patientId}`.
 ## Theme Customization Rules
 
 ### Sidebar
-- Date folders sorted newest-first (by `weight`)
+- Sync runs sorted newest-first (by `weight`); stages collapse under them with their `bookIcon`
 - Patient entries show colored dot/icon based on `severity` param
-- Summary pages show severity counter badges
+- Stage summary pages show severity counter badges
 
 ### Detail Pages
 - Severity banner at top (colored bar with icon), rendered from `severity` + `rule.name`
 - Rule section: `rule.name` + `rule.description`
-- Evaluation table: rendered from `evaluation.thsEvaluation` / `evaluation.limsEvaluation` against `rule.ths` / `rule.lims`; aggregated and timeValidity values rendered as styled badges; affirmations and content sub-sections shown only when the rule specifies `affirmed` or `content` maps
-- Consent comparison table: rendered from `consent.ths` and `consent.lims`, differing modules get `.row-diff`
+- Comparison column headers resolve from `sourceName` / `targetName` via `instance_<NAME>` i18n keys, falling back to generic `label_source` / `label_target`
+- Evaluation table: rendered from `evaluation.sourceEvaluation` / `evaluation.targetEvaluation` against `rule.source` / `rule.target`; aggregated and timeValidity values rendered as styled badges; affirmations and content sub-sections shown only when the rule specifies `affirmed` or `content` maps
+- Consent comparison table: rendered from `consent.source` and `consent.target`
 - Actions list: rendered from `rule.actions`; the entry matching `failureInfo.failureAction` gets `.action-failed`
 - Failure banner (only when `failureInfo` is set)
 - All German labels resolved via `i18n/de.yaml` — module keys exist in both camelCase (POJO fields) and ALL_CAPS (Java enum map keys)

@@ -164,15 +164,15 @@ table.report-table tr:nth-child(2n) {
   }
 }
 
-// Quad-column evaluation table: THS-ist | THS-rule | LIMS-ist | LIMS-rule
+// Quad-column evaluation table: source-ist | source-rule | target-ist | target-rule
 .report-table-quadcol {
   thead tr:first-child th {
     text-align: center;
     border-bottom: 1px solid $c-rule-border;
   }
 
-  .group-ths  { background: rgba(59, 130, 246, 0.06); }  // subtle blue
-  .group-lims { background: rgba(168, 85, 247, 0.06); }  // subtle purple
+  .group-source { background: rgba(59, 130, 246, 0.06); }  // subtle blue
+  .group-target { background: rgba(168, 85, 247, 0.06); }  // subtle purple
 
   .col-ist  { background: rgba(0, 0, 0, 0.02); }
   .col-rule {
@@ -226,7 +226,7 @@ table.report-table tr:nth-child(2n) {
 .affirmation-yes { @include badge-base; background: $c-ok-bg;  color: $c-ok-fg; }
 .affirmation-no  { @include badge-base; background: $c-err-bg; color: $c-err-fg; }
 
-// Module decision (per-module THS/LIMS values)
+// Module decision (per-module source/target values)
 .module-val { @include badge-base; }
 
 .module-val-GRANTED     { background: $c-ok-bg;      color: $c-ok-fg; }

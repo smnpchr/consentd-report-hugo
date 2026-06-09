@@ -2,14 +2,16 @@
 title: "INT-INCONSISTENT"
 date: 2026-05-19T18:30:03+02:00
 severity: error
+sourceName: THS
+targetName: CXX_PROD
 rule:
   name: INCONSISTENT_THS
   stage: IMPORT
-  ths:
+  source:
     timeValidity: VALID
     aggregated:
     - INCONSISTENT
-  lims:
+  target:
     timeValidity: ANY
     aggregated:
     - ANY
@@ -23,9 +25,9 @@ rule:
     actions:
     - REPORT
   stopEvaluation: true
-  description: "Inkonsistenter THS-Consent"
+  description: "Inkonsistenter Quell-Consent"
 evaluation:
-  thsEvaluation:
+  sourceEvaluation:
     timeValidity: VALID
     aggregated: INCONSISTENT
     affirmations:
@@ -38,14 +40,15 @@ evaluation:
       ADDITIONAL_ACQUISITION: GRANTED
       RETROSPECTIVE_USAGE: GRANTED
       NON_EU_TRANSFER: DECLINED
-  limsEvaluation:
+  targetEvaluation:
     timeValidity: NONE
     aggregated: EMPTY
   recency: ANY
   equality: ANY
 consent:
-  ths:
+  source:
     patientId: INT-INCONSISTENT
+    origin: THS
     validFrom: 2026-04-13
     validUntil: 2031-04-13
     acquireUseStock: DECLINED

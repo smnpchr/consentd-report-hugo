@@ -26,7 +26,7 @@
   {{ if .Page.Params.BookCollapseSection }}
     <input type="checkbox" id="section-{{ md5 .Page }}" class="toggle" {{ if or $current $ancestor }}checked{{ end }} />
     <label for="section-{{ md5 .Page }}" class="flex">
-      <a {{ if .Page.Content }}href="{{ .Page.RelPermalink }}"{{ else }}role="button"{{ end }} class="{{ if $current }}active{{ end }}">
+      <a {{ if or .Page.Content .Page.IsSection }}href="{{ .Page.RelPermalink }}"{{ else }}role="button"{{ end }} class="{{ if $current }}active{{ end }}">
         {{ template "book-icon-title" .Page -}}
       </a>
       <img src="{{ partial "docs/icon" "chevron-right" }}" class="book-icon" alt="{{ partial "docs/text/i18n" "Expand" }}" />

@@ -2,8 +2,18 @@
   <article class="markdown book-article">
     {{- .Content -}}
 
-    {{ if .Params.patientCount }}
-    {{/* Daily summary page — show severity badges and patient list */}}
+    {{ if .Sections }}
+    {{/* Intermediate level (reports root / sync / stage): list child sections */}}
+    {{ range .Sections.ByWeight }}
+      <h3><a href="{{ .RelPermalink }}">{{ with .Params.BookIcon }}<img src="{{ partial "docs/icon" . }}" class="book-icon" alt="" /> {{ end }}{{ .Title }}</a></h3>
+      <p>
+        {{- with .Params.patientCount }}{{ . }} {{ i18n "summary_patients" }}{{ end -}}
+        {{- with .Params.severityError }} &middot; {{ . }} {{ i18n "severity_error" }}{{ end -}}
+        {{- with .Params.severityCritical }} &middot; {{ . }} {{ i18n "severity_critical" }}{{ end -}}
+      </p>
+    {{ end }}
+    {{ else }}
+    {{/* Leaf summary (the run / stage that directly holds the patient comparisons) */}}
     <div class="severity-counters">
       {{ with .Params.severitySuccess }}<span class="severity-badge severity-badge-success">{{ i18n "severity_success" }}: {{ . }}</span>{{ end }}
       {{ with .Params.severityInfo }}<span class="severity-badge severity-badge-info">{{ i18n "severity_info" }}: {{ . }}</span>{{ end }}
@@ -24,7 +34,7 @@
         </tr>
       </thead>
       <tbody>
-        {{ range .Pages }}
+        {{ range .RegularPages }}
         <tr>
           <td><a href="{{ .RelPermalink }}">{{ .Title }}</a></td>
           <td><span class="severity-badge severity-badge-{{ .Params.severity }}">{{ i18n (printf "severity_%s" .Params.severity) }}</span></td>
@@ -35,15 +45,6 @@
         {{ end }}
       </tbody>
     </table>
-    {{ else }}
-    {{/* Top-level reports list — show date entries */}}
-    {{ range .Sections.ByWeight }}
-      <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-      <p>{{ .Params.patientCount }} {{ i18n "summary_patients" }}
-        {{ with .Params.severityError }} &middot; {{ . }} {{ i18n "severity_error" }}{{ end }}
-        {{ with .Params.severityCritical }} &middot; {{ . }} {{ i18n "severity_critical" }}{{ end }}
-      </p>
-    {{ end }}
     {{ end }}
   </article>
 {{ end }}
