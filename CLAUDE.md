@@ -211,7 +211,8 @@ Body: minimal — typically `# {patientId}`.
 - Severity banner at top (colored bar with icon), rendered from `severity` + `rule.name`
 - Rule section: `rule.name` + `rule.description`
 - Comparison column headers resolve from `sourceName` / `targetName` via `instance_<NAME>` i18n keys, falling back to generic `label_source` / `label_target`
-- Evaluation table: rendered from `evaluation.sourceEvaluation` / `evaluation.targetEvaluation` against `rule.source` / `rule.target`; aggregated and timeValidity values rendered as styled badges; affirmations and content sub-sections shown only when the rule specifies `affirmed` or `content` maps
+- Evaluation table: rendered from `evaluation.sourceEvaluation` / `evaluation.targetEvaluation` against `rule.source` / `rule.target`; aggregated, timeValidity and validityPeriod values rendered as styled badges; affirmations and content sub-sections shown only when the rule specifies `affirmed` or `content` maps
+- `validityPeriod` row ("Laufzeit"): per-consent check whether the validity interval matches the expected five-year term — `EXPECTED` / `DEVIATING` / `NONE` / `ANY` badges (`.period-val-*`); result column defaults to `NONE`, rule column to `ANY` when the field is absent
 - Consent comparison table: rendered from `consent.source` and `consent.target`
 - Actions list: rendered from `rule.actions`; the entry matching `failureInfo.failureAction` gets `.action-failed`
 - Failure banner (only when `failureInfo` is set)
