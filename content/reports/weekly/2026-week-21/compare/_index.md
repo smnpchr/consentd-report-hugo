@@ -1,7 +1,7 @@
 ---
 date: 2026-05-24T20:00:00+02:00
 weight: 20260524
-bookCollapseSection: true
+bookCollapseSection: false
 bookIcon: compare
 patientCount: 2
 severitySuccess: 1
