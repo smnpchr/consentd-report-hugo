@@ -81,8 +81,7 @@ module_EMPTY: "—"
 # Recency / equality
 recency_ANY: "beliebig"
 recency_NONE: "—"
-recency_SOURCE: "Quelle aktueller"
-recency_TARGET: "Ziel aktueller"
+recency_newer: "aktueller"
 recency_EQUAL: "Gleich aktuell"
 
 equality_ANY: "beliebig"

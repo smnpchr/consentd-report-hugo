@@ -34,8 +34,18 @@
         <tbody>
           <tr>
             <td>{{ i18n "label_recency" }}</td>
-            <td class="col-ist">{{ i18n (printf "recency_%s" (.recency | default "ANY")) }}</td>
-            <td class="col-rule">{{ i18n (printf "recency_%s" ($p.rule.recency | default "ANY")) }}</td>
+            <td class="col-ist">
+              {{ $rec := .recency | default "ANY" }}
+              {{- if eq $rec "SOURCE" -}}{{ i18n (printf "instance_%s" $p.sourceName) }} {{ i18n "recency_newer" }}
+              {{- else if eq $rec "TARGET" -}}{{ i18n (printf "instance_%s" $p.targetName) }} {{ i18n "recency_newer" }}
+              {{- else -}}{{ i18n (printf "recency_%s" $rec) }}{{- end -}}
+            </td>
+            <td class="col-rule">
+              {{ $rec := $p.rule.recency | default "ANY" }}
+              {{- if eq $rec "SOURCE" -}}{{ i18n (printf "instance_%s" $p.sourceName) }} {{ i18n "recency_newer" }}
+              {{- else if eq $rec "TARGET" -}}{{ i18n (printf "instance_%s" $p.targetName) }} {{ i18n "recency_newer" }}
+              {{- else -}}{{ i18n (printf "recency_%s" $rec) }}{{- end -}}
+            </td>
           </tr>
           <tr>
             <td>{{ i18n "label_equality" }}</td>
