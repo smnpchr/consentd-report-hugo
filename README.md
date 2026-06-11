@@ -20,7 +20,7 @@ Output goes to `public/`, ready to serve via nginx or any static file server.
 
 ## How content gets here
 
-consentd's Java `Md`-Builder generates Markdown reports after each sync run and places them into `content/reports/`. Each run creates a date folder with a summary and one file per patient evaluation. Hugo renders them — no manual editing needed.
+consentd's Java `Md`-Builder generates Markdown reports after each sync run and places them into `content/reports/`. Content is organised in three section levels — **sync run → evaluation stage → patient detail**: each run is a top-level folder (titled by date or week label) holding one folder per evaluation stage (`import`, `operational`, `compare`), each of which carries a stage summary and one file per patient evaluation. Hugo renders them — no manual editing needed.
 
 See [docs/front-matter-convention.md](docs/front-matter-convention.md) for the interface between Md-Builder and the Hugo theme.
 
@@ -28,7 +28,8 @@ See [docs/front-matter-convention.md](docs/front-matter-convention.md) for the i
 
 | Level | Meaning |
 |-------|---------|
-| info | Normal import |
+| success | Action executed successfully (e.g. consent imported) |
+| info | Informational only, no action required |
 | warning | Anomaly worth noting |
 | error | Data problem (e.g. inconsistent consent) |
 | critical | Action failed (e.g. LIMS unreachable) |
