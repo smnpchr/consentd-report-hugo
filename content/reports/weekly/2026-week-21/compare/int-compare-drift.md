@@ -29,6 +29,7 @@ rule:
 evaluation:
   sourceEvaluation:
     timeValidity: VALID
+    validityPeriod: DEVIATING
     aggregated: AFFIRMED
     affirmations:
       ACQUIRE_USE_STOCK: true
@@ -42,6 +43,7 @@ evaluation:
       NON_EU_TRANSFER: GRANTED
   targetEvaluation:
     timeValidity: VALID
+    validityPeriod: DEVIATING
     aggregated: AFFIRMED
     affirmations:
       ACQUIRE_USE_STOCK: true

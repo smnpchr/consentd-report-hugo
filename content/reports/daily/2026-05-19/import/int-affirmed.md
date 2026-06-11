@@ -9,6 +9,7 @@ rule:
   stage: IMPORT
   source:
     timeValidity: VALID
+    validityPeriod: EXPECTED
     aggregated:
     - AFFIRMED
   target:
@@ -30,6 +31,7 @@ rule:
 evaluation:
   sourceEvaluation:
     timeValidity: VALID
+    validityPeriod: EXPECTED
     aggregated: AFFIRMED
     affirmations:
       ACQUIRE_USE_STOCK: true
@@ -51,7 +53,7 @@ consent:
     patientId: INT-AFFIRMED
     origin: THS
     validFrom: 2026-04-19
-    validUntil: 2027-05-19
+    validUntil: 2031-04-19
     acquireUseStock: GRANTED
     additionalAcquisition: GRANTED
     retrospectiveUsage: GRANTED

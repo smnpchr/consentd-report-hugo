@@ -177,6 +177,7 @@ rule:
   stage: IMPORT
   source:
     timeValidity: VALID
+    validityPeriod: EXPECTED
     aggregated:
     - AFFIRMED
   target:
@@ -201,6 +202,7 @@ failureInfo:
 evaluation:
   sourceEvaluation:
     timeValidity: VALID
+    validityPeriod: EXPECTED
     aggregated: AFFIRMED
     affirmations:
       NON_EU_TRANSFER: true
@@ -276,6 +278,7 @@ imposes on each side.
 | Field | Type | Description |
 |---|---|---|
 | `timeValidity` | String | Expected validity (`ANY`, `VALID`, `EXPIRED`, `NONE`) |
+| `validityPeriod` | String | Expected validity-term condition (`ANY`, `EXPECTED`, `DEVIATING`, `NONE`) |
 | `aggregated` | List<String> | Allowed aggregation values. Wildcard: `[ANY]` |
 | `affirmed` | Map<String, Boolean>, optional | For affirmation rules: target values per module |
 | `content` | Map<String, String>, optional | For content rules: target values per module (`ModuleStatus` enum) |
@@ -311,6 +314,7 @@ Direct serialisation of `ConsentEvaluation`.
 | Field | Type | Description |
 |---|---|---|
 | `timeValidity` | String | `VALID`, `EXPIRED`, `NONE` |
+| `validityPeriod` | String | Whether the validity interval matches the expected term: `EXPECTED`, `DEVIATING`, `NONE` |
 | `aggregated` | String | Aggregated evaluation value |
 | `affirmations` | Map<String, Boolean>, optional | Per-module affirmation |
 | `content` | Map<String, String>, optional | Per-module status |
@@ -386,6 +390,18 @@ point at all".
 | `NONE` | No temporal information / no consent |
 | `VALID` | Currently valid |
 | `EXPIRED` | Expired |
+
+### `ValidityPeriod` (validity-term match)
+
+Per-consent check of whether the validity interval (`validFrom` →
+`validUntil`) equals the expected term (exactly five years).
+
+| Value | Meaning |
+|---|---|
+| `ANY` | Wildcard, only in `rule.*.validityPeriod` |
+| `NONE` | Not determinable — `validFrom` and/or `validUntil` missing |
+| `EXPECTED` | Interval matches the expected term (exactly five years) |
+| `DEVIATING` | Interval differs from the expected term |
 
 ### `Recency` (recency relation)
 

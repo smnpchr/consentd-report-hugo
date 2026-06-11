@@ -86,6 +86,13 @@
             <td class="col-ist">{{ partial "report-timevalidity-cell" ($targetEval.timeValidity | default "NONE") }}</td>
             <td class="col-rule">{{ partial "report-timevalidity-cell" ($targetRule.timeValidity | default "ANY") }}</td>
           </tr>
+          <tr>
+            <td>{{ i18n "label_period" }}</td>
+            <td class="col-ist">{{ partial "report-validityperiod-cell" ($sourceEval.validityPeriod | default "NONE") }}</td>
+            <td class="col-rule">{{ partial "report-validityperiod-cell" ($sourceRule.validityPeriod | default "ANY") }}</td>
+            <td class="col-ist">{{ partial "report-validityperiod-cell" ($targetEval.validityPeriod | default "NONE") }}</td>
+            <td class="col-rule">{{ partial "report-validityperiod-cell" ($targetRule.validityPeriod | default "ANY") }}</td>
+          </tr>
         </tbody>
       </table>
 

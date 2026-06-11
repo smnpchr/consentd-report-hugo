@@ -29,6 +29,7 @@ label_target: "Ziel"          # generic fallback header when no origin is known
 label_module: "Modul"
 label_aggregated: "Aggregiert"
 label_validity: "Gültigkeit"
+label_period: "Laufzeit"
 label_recency: "Aktualität"
 label_equality: "Gleichheit"
 label_valid_from: "Gültig von"
@@ -69,6 +70,12 @@ validity_ANY: "beliebig"
 validity_NONE: "—"
 validity_VALID: "gültig"
 validity_EXPIRED: "abgelaufen"
+
+# Validity period (interval matches the expected 5-year term)
+period_ANY: "beliebig"
+period_NONE: "—"
+period_EXPECTED: "Erwartet"
+period_DEVIATING: "Abweichend"
 
 # Module status values
 module_GRANTED: "Erteilt"

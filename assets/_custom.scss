@@ -255,6 +255,14 @@ table.report-table tr:nth-child(2n) {
 .timevalidity-val-NONE    { background: transparent; color: $c-empty-fg; }
 .timevalidity-val-ANY     { background: $c-mute-bg;  color: $c-mute-fg; font-style: italic; }
 
+// validityPeriod (interval matches the expected 5-year term)
+.period-val { @include badge-base; }
+
+.period-val-EXPECTED  { background: $c-ok-bg;    color: $c-ok-fg; }
+.period-val-DEVIATING { background: $c-warn-bg;  color: $c-warn-fg; }
+.period-val-NONE      { background: transparent; color: $c-empty-fg; }
+.period-val-ANY       { background: $c-mute-bg;  color: $c-mute-fg; font-style: italic; }
+
 // Validity (computed valid/expired for a consent's date range)
 .validity-badge   { @include badge-base(0.5rem); white-space: nowrap; }
 .validity-valid   { background: $c-ok-bg;  color: $c-ok-fg; }

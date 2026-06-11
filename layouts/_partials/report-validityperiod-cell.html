@@ -1,0 +1,7 @@
+{{/* Renders a validityPeriod value as a styled badge. Empty/nil → em-dash. */}}
+{{ $val := . }}
+{{- if eq $val nil -}}
+&mdash;
+{{- else -}}
+<span class="period-val period-val-{{ $val }}">{{ i18n (printf "period_%s" $val) }}</span>
+{{- end -}}
