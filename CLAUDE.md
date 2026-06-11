@@ -62,40 +62,51 @@ into `content/reports/` as Markdown files with minimal front matter.
 
 ## Content Structure
 
-Three section levels under `content/reports/`: **sync run → evaluation
-stage → patient detail**. Each sync run is its own top-level section
-(named by `sync.title()` — a date, a week label); stages (`import`,
-`operational`, `compare`) are the leaf summaries that directly hold the
-patient comparisons.
+Four section levels under `content/reports/`: **sync type → sync run →
+evaluation stage → patient detail**. Each sync type (`daily`, `weekly`,
+more may be added) is a flat top-level section (`bookFlatSection`) holding
+its runs; each sync run is named by `sync.title()` (a date, a week label);
+stages (`import`, `operational`, `compare`) are the leaf summaries that
+directly hold the patient comparisons.
 
 ```
 content/
 ├── _index.md                          # Landing page
 └── reports/
-    ├── _index.md                      # Reports overview (lists sync runs)
-    ├── 2026-05-19/                    # Sync run — "Daily report" (titled by date)
-    │   ├── _index.md                  # Sync-run index (structural node)
-    │   ├── import/                    # Evaluation stage
-    │   │   ├── _index.md              # Stage index (bookIcon + severity counters)
-    │   │   ├── int-affirmed.md        # Patient detail
-    │   │   └── int-import-fail.md
-    │   └── operational/
-    │       ├── _index.md
-    │       ├── int-declined.md
-    │       └── int-update.md
-    └── 2026-week-21/                  # Sync run — "Woche 21 Report"
+    ├── _index.md                      # Reports overview (lists sync types)
+    ├── daily/                         # Sync type — flat section (bookFlatSection)
+    │   ├── _index.md                  # Sync-type index (title + weight)
+    │   └── 2026-05-19/                # Sync run — titled by date
+    │       ├── _index.md              # Sync-run index (structural node)
+    │       ├── import/                # Evaluation stage
+    │       │   ├── _index.md          # Stage index (bookIcon + severity counters)
+    │       │   ├── int-affirmed.md    # Patient detail
+    │       │   └── int-import-fail.md
+    │       └── operational/
+    │           ├── _index.md
+    │           ├── int-declined.md
+    │           └── int-update.md
+    └── weekly/                        # Sync type — flat section
         ├── _index.md
-        └── compare/                   # COMPARE stage
+        └── 2026-week-21/              # Sync run — "Woche 21 Report"
             ├── _index.md
-            ├── int-compare-equal.md
-            └── int-compare-drift.md
+            └── compare/               # COMPARE stage
+                ├── _index.md
+                ├── int-compare-equal.md
+                └── int-compare-drift.md
 ```
 
 ### Sidebar Behavior
 
+- Each sync type is a flat section (`bookFlatSection`); its runs appear
+  directly under it without an extra collapsible level
 - Each sync run is a collapsible chapter; each stage a collapsible
   sub-chapter carrying its `bookIcon` (`import` / `operational` /
   `compare`, served from `assets/icons/`)
+- The application surfaces the freshest content by emitting
+  `bookCollapseSection: false` on the most recent run and its primary
+  stage (latest daily's `import`, latest weekly's `compare`), so they
+  render expanded by default; older runs keep `true` and stay collapsed
 - Patient entries appear as child items under their stage when expanded
 - Patient entries are color-coded by severity via CSS class
 - Clicking a patient shows the full evaluation detail
@@ -174,8 +185,8 @@ objects feed the detail tables.
 
 See `docs/front-matter-convention.md` for the canonical schema, field
 tables, and the full enum value lists. Example fixtures live in
-`content/reports/2026-05-19/` (IMPORT + OPERATIONAL) and
-`content/reports/2026-week-21/` (COMPARE).
+`content/reports/daily/2026-05-19/` (IMPORT + OPERATIONAL) and
+`content/reports/weekly/2026-week-21/` (COMPARE).
 
 Body: minimal — typically `# {patientId}`.
 
