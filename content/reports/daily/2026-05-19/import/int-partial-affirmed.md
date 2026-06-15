@@ -1,5 +1,6 @@
 ---
 title: "INT-PARTIAL-AFFIRMED"
+patients: ["INT-PARTIAL-AFFIRMED"]
 date: 2026-05-19T18:30:06+02:00
 severity: info
 sourceName: THS

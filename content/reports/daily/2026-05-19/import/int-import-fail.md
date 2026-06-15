@@ -1,5 +1,6 @@
 ---
 title: "INT-IMPORT-FAIL"
+patients: ["INT-IMPORT-FAIL"]
 date: 2026-05-19T18:30:05+02:00
 severity: critical
 sourceName: THS

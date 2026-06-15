@@ -1,5 +1,6 @@
 ---
 title: "INT-CONTENT-MISMATCH"
+patients: ["INT-CONTENT-MISMATCH"]
 date: 2026-05-19T18:30:07+02:00
 severity: warning
 sourceName: THS

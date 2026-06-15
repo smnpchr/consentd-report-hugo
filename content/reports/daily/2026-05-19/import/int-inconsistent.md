@@ -1,5 +1,6 @@
 ---
 title: "INT-INCONSISTENT"
+patients: ["INT-INCONSISTENT"]
 date: 2026-05-19T18:30:03+02:00
 severity: error
 sourceName: THS

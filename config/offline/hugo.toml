@@ -1,0 +1,3 @@
+relativeURLs = true
+uglyURLs = true
+disableKinds = ["rss", "sitemap"]

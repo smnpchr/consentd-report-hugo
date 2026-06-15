@@ -1,5 +1,6 @@
 ---
 title: "INT-DECLINED"
+patients: ["INT-DECLINED"]
 date: 2026-05-19T18:30:02+02:00
 severity: warning
 sourceName: THS

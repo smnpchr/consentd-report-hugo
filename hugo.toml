@@ -9,6 +9,21 @@ defaultContentLanguage = "de"
   BookSection = "reports"
   BookMenuBundle = "/reports"
 
+# Patient-based taxonomy: one term per patient id, listing every sync run
+# in which that id appears. Declaring [taxonomies] also disables Hugo's
+# default tags/categories taxonomies (which we don't use).
+[taxonomies]
+  patient = "patients"
+
+# Sidebar link to the patient overview, rendered by the Hugo Book theme
+# via docs/menu-hugo from .Site.Menus.after. pageRef (not url) so Hugo
+# derives the link from the taxonomy page's RelPermalink — this lets the
+# offline build rewrite it to a relative .../patients/index.html path.
+[[menu.after]]
+  name = "Patienten"
+  pageRef = "/patients"
+  weight = 10
+
 [markup]
   [markup.tableOfContents]
     startLevel = 2

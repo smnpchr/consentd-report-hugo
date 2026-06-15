@@ -1,0 +1,13 @@
+{{ define "main" }}
+<article class="markdown book-article">
+  <h1>{{ i18n "summary_patients" }}</h1>
+  <ul class="patient-index">
+    {{ range .Pages.ByTitle }}
+      <li>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <span class="patient-count">({{ len .Pages }})</span>
+      </li>
+    {{ end }}
+  </ul>
+</article>
+{{ end }}

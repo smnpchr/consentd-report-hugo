@@ -1,5 +1,6 @@
 ---
 title: "INT-COMPARE-DRIFT"
+patients: ["INT-COMPARE-DRIFT"]
 date: 2026-05-24T20:00:02+02:00
 severity: warning
 sourceName: CXX_PROD

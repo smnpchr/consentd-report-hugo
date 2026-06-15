@@ -60,6 +60,14 @@ into `content/reports/` as Markdown files with minimal front matter.
 - **No build tooling**: No npm, no PostCSS — plain Hugo
 - **Deployment**: `hugo` builds to `public/`, served via nginx or file://
 
+### Configuration layout
+
+- `hugo.toml` — root config: theme, taxonomies, menus, markup
+- `config/offline/hugo.toml` — overlay merged on top of the root config
+  only when building with `hugo -e offline` (see Development → Offline
+  build). Activated solely by that flag; default `hugo` / `hugo server`
+  builds ignore it
+
 ## Content Structure
 
 Four section levels under `content/reports/`: **sync type → sync run →
@@ -92,9 +100,14 @@ content/
             ├── _index.md
             └── compare/               # COMPARE stage
                 ├── _index.md
+                ├── int-affirmed.md     # same patient as daily import — shows taxonomy aggregation
                 ├── int-compare-equal.md
                 └── int-compare-drift.md
 ```
+
+The `int-affirmed` id deliberately appears in both `daily/.../import/` and
+`weekly/.../compare/` so the patient taxonomy (`/patients/INT-AFFIRMED/`)
+lists two appearances — a worked example of the cross-run overview.
 
 ### Sidebar Behavior
 
@@ -110,6 +123,44 @@ content/
 - Patient entries appear as child items under their stage when expanded
 - Patient entries are color-coded by severity via CSS class
 - Clicking a patient shows the full evaluation detail
+
+## Patient Taxonomy
+
+A custom Hugo taxonomy gives an at-a-glance, cross-run view of where a
+patient id appears. Declared in `hugo.toml`:
+
+```toml
+[taxonomies]
+  patient = "patients"
+```
+
+Declaring `[taxonomies]` also disables Hugo's default `tags`/`categories`
+(unused here). The singular `patient` is the term concept; the plural
+`patients` is both the URL segment (`/patients/`) and the **front-matter
+key** the Md-Builder must emit on each patient detail page:
+
+```yaml
+patients: ["INT-AFFIRMED"]   # the patient id, as a one-element list
+```
+
+Without that key the taxonomy renders empty — it is the Md-Builder's
+responsibility to add it (the leaf pages under `content/reports/` are
+generated and must not be hand-edited).
+
+Rendering:
+- `layouts/taxonomy.html` — `/patients/` overview: every patient id with
+  a count of reports mentioning it
+- `layouts/term.html` — `/patients/<id>/`: a table of every appearance
+  (Sync · Run · Stage · Severity), each row linking to the detail page.
+  Walks `.Parent` three times (stage → run → sync), matching the
+  sync type → run → stage → patient hierarchy
+- Both use `i18n/de.yaml` keys (`summary_patients`, `summary_patient`,
+  `summary_severity`) — no hardcoded German
+- Sidebar access: a `[[menu.after]]` entry in `hugo.toml` rendered at the
+  bottom of the Hugo Book sidebar. It uses `pageRef = "/patients"` (not a
+  static `url`) so Hugo derives the link from the taxonomy page's
+  permalink — required for the offline build to rewrite it to a relative
+  `.../patients/index.html` path
 
 ## Front Matter Convention
 
@@ -145,11 +196,16 @@ bookCollapseSection: true
 
 Written once per stage. Carries the `bookIcon` and the severity
 aggregates; this is also the leaf summary that renders the patient table.
-No `title` — Hugo derives `.Title` from the folder name (`import` →
-"Import").
+The `title` is the capitalized stage name (`import` → "Import"), written
+explicitly by the Md-Builder. Hugo would derive the same value from the
+folder name, but it must be present in front matter so it resolves in
+contexts that read `.Title` without the folder fallback — notably the
+patient taxonomy term table (`layouts/term.html`), which renders
+`$stage.Title`.
 
 ```yaml
 ---
+title: "Import"
 date: 2026-05-19T18:30:00+02:00
 weight: 20260519
 bookCollapseSection: true
@@ -164,7 +220,7 @@ severityCritical: 0
 
 | Field | Used by |
 |-------|---------|
-| `title` | (sync-run only) sidebar, page title |
+| `title` | sidebar, page title; on stages the capitalized stage name (also read by the taxonomy term table) |
 | `date` | Hugo sort order |
 | `weight` | Sidebar ordering (newest first) |
 | `bookCollapseSection` | Hugo Book collapsible sidebar section |
@@ -239,9 +295,34 @@ Body: minimal — typically `# {patientId}`.
 ## Development
 
 ```bash
-hugo server -D    # Local preview with drafts
-hugo              # Build to public/
+hugo server -D                 # Local preview with drafts
+hugo                           # Build to public/ (pretty URLs, for nginx)
+hugo -e offline -d <out>       # Offline-browsable build (file://)
 ```
+
+### Offline build (`hugo -e offline`)
+
+Produces a self-contained copy that opens directly from disk (`file://`)
+or a USB stick — no web server. The `offline` environment overlays
+`config/offline/hugo.toml` on top of root `hugo.toml`; only `hugo -e
+offline` activates it, so the default `hugo` / `hugo server` builds are
+unaffected. The overlay sets:
+
+- `relativeURLs = true` — rewrites root-absolute links (`/patients/`)
+  into relative paths so they resolve without a server
+- `uglyURLs = true` — leaf pages become real `page.html` files; section
+  and taxonomy index pages stay as `index.html` in their folder. Together
+  with `relativeURLs`, every link points at a concrete `.html` file
+  instead of a bare directory
+- `disableKinds = ["rss", "sitemap"]` — drops `.xml` files useless offline
+
+The sidebar "Patienten" menu entry uses `pageRef` (not `url`) in
+`hugo.toml` precisely so this build can rewrite it to a relative
+`.../patients/index.html` path.
+
+Caveat: the Hugo Book search box does not work under `file://` (it loads
+an ES module via fetch, which browsers block for `file://`). Sidebar
+navigation and all report pages work; only search is inert.
 
 ## What NOT to do
 

@@ -1,0 +1,23 @@
+{{ define "main" }}
+<article class="markdown book-article">
+  <h1>{{ i18n "summary_patient" }} {{ .Title }}</h1>
+  <table class="report-table">
+    <thead>
+      <tr><th>Sync</th><th>Run</th><th>Stage</th><th>{{ i18n "summary_severity" }}</th></tr>
+    </thead>
+    <tbody>
+      {{ range .Pages.ByTitle }}
+        {{ $stage := .Parent }}
+        {{ $run   := $stage.Parent }}
+        {{ $sync  := $run.Parent }}
+        <tr>
+          <td>{{ $sync.Title }}</td>
+          <td>{{ $run.Title }}</td>
+          <td><a href="{{ .RelPermalink }}">{{ $stage.Title }}</a></td>
+          <td>{{ .Params.severity }}</td>
+        </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</article>
+{{ end }}

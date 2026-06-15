@@ -1,5 +1,6 @@
 ---
 title: "INT-COMPARE-EQUAL"
+patients: ["INT-COMPARE-EQUAL"]
 date: 2026-05-24T20:00:01+02:00
 severity: success
 sourceName: CXX_PROD
