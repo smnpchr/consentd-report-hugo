@@ -315,14 +315,47 @@ unaffected. The overlay sets:
   with `relativeURLs`, every link points at a concrete `.html` file
   instead of a bare directory
 - `disableKinds = ["rss", "sitemap"]` — drops `.xml` files useless offline
+- `[params] BookSearch = false` — disables the stock module search; a
+  file://-safe engine is injected instead (see below)
 
 The sidebar "Patienten" menu entry uses `pageRef` (not `url`) in
 `hugo.toml` precisely so this build can rewrite it to a relative
 `.../patients/index.html` path.
 
-Caveat: the Hugo Book search box does not work under `file://` (it loads
-an ES module via fetch, which browsers block for `file://`). Sidebar
-navigation and all report pages work; only search is inert.
+#### Offline fuzzy search
+
+The stock Hugo Book search can't run under `file://` — it loads Fuse as
+an ES module and `fetch()`es the index, both blocked by browsers for
+`file://`. The offline environment replaces it with a self-contained
+engine that has neither dependency:
+
+- `assets/search-offline.js` — Fuse is `import`ed here and **bundled in**
+  by `js.Build` (esbuild, `format: iife`), producing one classic
+  `<script>` — no runtime module import. The search index is **inlined**
+  at build time from `.Site.Pages` — no `fetch()`.
+- `assets/fuse.min.mjs` — a copy of the theme's `static/fuse.min.mjs`
+  (kept identical). The copy exists only because `js.Build` resolves
+  imports from the **assets** pipeline, while the theme ships Fuse under
+  `static/`, which esbuild can't reach. It is not a version concern (the
+  theme is a pinned submodule); a module mount would also work but the
+  copy keeps the offline search decoupled from the theme's file layout.
+- `layouts/_partials/docs/inject/head.html` — gated on
+  `hugo.Environment == "offline"`; emits the bundled script plus a
+  per-page `window.__SEARCH_BASE__` (the relative climb to the site root).
+  In the default environment it emits nothing, so the stock search is used
+  unchanged.
+- Result links are stored root-relative in the index and prefixed with
+  `__SEARCH_BASE__` at runtime, so they resolve from any directory depth
+  on disk. The base is computed from `.RelPermalink`'s segment count
+  (reliable because `uglyURLs` makes it always end in `…/x.html`);
+  `relURL` can't be used since `relativeURLs` is a post-render rewrite of
+  HTML attributes, not of inline script text.
+- `layouts/_partials/docs/search.html` is overridden only to keep
+  rendering the input box when `BookSearch` is off in the offline env.
+
+Note on escaping: in the inline `<script>` (HTML/template, JS context)
+the base uses `jsonify | safeJS` to avoid double-escaping; inside
+`search-offline.js` (a text/template resource) plain `jsonify` is correct.
 
 ## What NOT to do
 

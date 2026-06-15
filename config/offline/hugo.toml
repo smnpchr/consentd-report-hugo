@@ -1,3 +1,9 @@
 relativeURLs = true
 uglyURLs = true
 disableKinds = ["rss", "sitemap"]
+
+[params]
+  # Disable the stock module-based search (it needs fetch + ES module
+  # imports, both blocked under file://). The offline search engine is
+  # injected instead — see layouts/_partials/docs/inject/head.html.
+  BookSearch = false

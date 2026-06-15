@@ -1,0 +1,19 @@
+{{- /* Offline-only fuzzy search. In the default (production) environment this
+  emits nothing, so the stock Hugo Book module search is used unchanged. Under
+  `hugo -e offline` it injects a self-contained, file://-safe search engine
+  (Fuse bundled via esbuild, index inlined, no fetch). See assets/search-offline.js. */ -}}
+{{- if eq hugo.Environment "offline" -}}
+  {{- /* Per-page relative climb to the site root. Under the offline config
+    (uglyURLs) .RelPermalink always ends in a file (…/x.html), so the climb
+    depth is one less than the number of path segments. relURL can't be used
+    here: relativeURLs is a post-render rewrite of HTML attributes, not of
+    inline script text. Result links are stored root-relative and prefixed
+    with this base at runtime. jsonify|safeJS avoids the JS-context double
+    escaping html/template would otherwise apply inside <script>. */ -}}
+  {{- $segs := split (strings.TrimPrefix "/" .RelPermalink) "/" -}}
+  {{- $base := strings.Repeat (sub (len $segs) 1) "../" -}}
+  <script>window.__SEARCH_BASE__ = {{ $base | jsonify | safeJS }};</script>
+  {{- $opts := dict "format" "iife" "minify" true -}}
+  {{- $js := resources.Get "search-offline.js" | resources.ExecuteAsTemplate "search-offline.js" . | js.Build $opts | resources.Fingerprint -}}
+  <script defer src="{{ $js.RelPermalink }}"></script>
+{{- end -}}
