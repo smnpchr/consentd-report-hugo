@@ -9,6 +9,14 @@
 
   <article class="markdown book-article">
     {{- .Content -}}
+
+    {{/* Back reference to the patient taxonomy term page (cross-run occurrences) */}}
+    {{ with .GetTerms "patients" }}
+      <p class="patient-backref">
+        {{ range . }}<a href="{{ .RelPermalink }}">{{ i18n "patient_occurrences" }} &rarr;</a>{{ end }}
+      </p>
+    {{ end }}
+
     {{ with $p.rule.description }}<h2>{{ . }}</h2>{{ end }}
 
     {{/* Evaluation section */}}

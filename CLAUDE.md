@@ -154,8 +154,16 @@ Rendering:
   (Sync · Run · Stage · Severity), each row linking to the detail page.
   Walks `.Parent` three times (stage → run → sync), matching the
   sync type → run → stage → patient hierarchy
-- Both use `i18n/de.yaml` keys (`summary_patients`, `summary_patient`,
-  `summary_severity`) — no hardcoded German
+- `layouts/reports/single.html` — the reverse link: each patient detail
+  page carries a back-reference to its term page. `{{ .GetTerms
+  "patients" }}` resolves the page's `patients:` front-matter ids into
+  the term page objects, so the link's `.RelPermalink` is the term page's
+  own `/patients/<id>/` address (not derived from the detail page's
+  position); the offline build rewrites it relative like any other link.
+  Closes the loop with `term.html`, which links the other direction
+- All three use `i18n/de.yaml` keys (`summary_patients`,
+  `summary_patient`, `summary_severity`, `patient_occurrences`) — no
+  hardcoded German
 - Sidebar access: a `[[menu.after]]` entry in `hugo.toml` rendered at the
   bottom of the Hugo Book sidebar. It uses `pageRef = "/patients"` (not a
   static `url`) so Hugo derives the link from the taxonomy page's

@@ -108,6 +108,7 @@ failure_suffix: "fehlgeschlagen"
 summary_patients: "Patienten"
 summary_patient: "Patient"
 summary_severity: "Severity"
+patient_occurrences: "Alle Vorkommen dieses Patienten"
 
 label_result: "Ergebnis"
 label_rule: "Regel"

@@ -219,6 +219,14 @@ table.report-table tr:nth-child(2n) {
 // Summary patient table fills the article width
 .book-article > table { width: 100%; }
 
+// Back reference from a patient detail page to its taxonomy term page
+.patient-backref {
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+
+  a { font-weight: 500; }
+}
+
 
 // ── 7. Badges ─────────────────────────────────────────────────
 
