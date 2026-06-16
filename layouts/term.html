@@ -14,7 +14,7 @@
           <td>{{ $sync.Title }}</td>
           <td>{{ $run.Title }}</td>
           <td><a href="{{ .RelPermalink }}">{{ $stage.Title }}</a></td>
-          <td>{{ .Params.severity }}</td>
+          <td><span class="severity-badge severity-badge-{{ .Params.severity }}">{{ i18n (printf "severity_%s" .Params.severity) }}</span></td>
         </tr>
       {{ end }}
     </tbody>
